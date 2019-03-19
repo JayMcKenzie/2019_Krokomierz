@@ -99,7 +99,7 @@ int main(void)
 
   tm1637Init();
   tm1637SetBrightness(3);
-  tm1637DisplayDecimal(1235, 1);
+  tm1637DisplayDecimal(2137, 0);
 
   /* USER CODE END 2 */
 
