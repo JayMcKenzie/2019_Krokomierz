@@ -1,5 +1,5 @@
-Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_cortex.o: \
- ../Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_cortex.c \
+Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_spi.o: \
+ ../Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_spi.c \
  D:/PTM/2019_Krokomierz/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h \
  D:/PTM/2019_Krokomierz/Inc/stm32f4xx_hal_conf.h \
  D:/PTM/2019_Krokomierz/Inc/main.h \
