@@ -39,42 +39,35 @@
  * 	MISO	PA6			Master in, Slave out for SPI1
  * 	SCK		PA5			Serial clock for SPI1
  * 	CS		PE3			Chip select for LIS
- * 
- * Change default pinout. Open defines.h file and copy lines below and edit them
- * 	
- * 	//Select custom SPI
- * 	//#define LIS302DL_LIS3DSH_SPI				SPI1
- * 	//#define LIS302DL_LIS3DSH_SPI_PINSPACK		TM_SPI_PinsPack_1
- * 	
- * 	//Select custom CS pin for SPI
- * 	//#define LIS302DL_LIS3DSH_CS_RCC			RCC_AHB1Periph_GPIOE
- * 	//#define LIS302DL_LIS3DSH_CS_PORT			GPIOE
- * 	//#define LIS302DL_LIS3DSH_CS_PIN			GPIO_Pin_3
- * 
- */
+
+*/
+
 #ifndef TM_LIS302DL_LIS3DSH_H
 #define TM_LIS302DL_LIS3DSH_H 100
-/**
- * Library dependencies
- * - STM32F4xx
- * - STM32F4xx RCC
- * - STM32F4xx GPIO
- * - defines.h
- * - TM SPI
- */
+
 /**
  * Includes
  */
 #include "stm32f4xx.h"
 #include "stm32f4xx_rcc.h"
 #include "stm32f4xx_gpio.h"
-#include "defines.h"
-#include "tm_stm32f4_spi.h"
+#include "stm32f4xx_spi.h"
+//#include "tm_stm32f4_spi.h"
 
 /* SPI on STM32F4-Discovery board */
 #ifndef LIS302DL_LIS3DSH_SPI
 #define LIS302DL_LIS3DSH_SPI				SPI1
-#define LIS302DL_LIS3DSH_SPI_PINSPACK		TM_SPI_PinsPack_1
+#define LIS302DL_LIS3DSH_SPI_AF             GPIO_AF_SPI1
+#define LIS302DL_LIS3DSH_SPI_RCC			RCC_APB2Periph_SPI1
+#define LIS302DL_LIS3DSH_SPI_GPIO_RCC		RCC_AHB1Periph_GPIOA
+#define LIS302DL_LIS3DSH_SPI_Port			GPIOA
+#define LIS302DL_LIS3DSH_SPI_MOSI_Pin		GPIO_Pin_7
+#define LIS302DL_LIS3DSH_SPI_MOSI_AF		GPIO_PinSource7
+#define LIS302DL_LIS3DSH_SPI_MISO_Pin		GPIO_Pin_6
+#define LIS302DL_LIS3DSH_SPI_MISO_AF		GPIO_PinSource6
+#define LIS302DL_LIS3DSH_SPI_SCK_Pin		GPIO_Pin_5
+#define LIS302DL_LIS3DSH_SPI_SCK_AF			GPIO_PinSource5
+
 #endif
 
 /* CS pin on STM32F4-Discovery board */
