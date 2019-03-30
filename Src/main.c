@@ -44,6 +44,7 @@
 
 #include "stm32_tm1637.h"
 #include "lis3dsh.h"
+#include "tm_stm32f4_lis302dl_lis3dsh.h"
 
 /* USER CODE END Includes */
 
