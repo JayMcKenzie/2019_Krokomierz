@@ -1,2 +1,7 @@
-
-Debug/2019_Krokomierz.elf
+/Debug/
+*.d
+*.o
+*.elf
+*.hex
+*.mk
+*.map
