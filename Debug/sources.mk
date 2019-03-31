@@ -15,6 +15,7 @@ C_DEPS :=
 
 # Every subdirectory with source files must be described here
 SUBDIRS := \
+Drivers/STM32F4xx_HAL_Driver/Src \
 Src \
 startup \
 
