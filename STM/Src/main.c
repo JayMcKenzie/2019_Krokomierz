@@ -88,7 +88,7 @@ void TIM4_IRQHandler(void) {                                // nieskonczona pêtl
 			}
 
 			TIM_ClearITPendingBit(TIM4, TIM_IT_Update);       // zerujemy flagê - info, ze obsluzono przerwanie
-
+			//pora cos zmienic w komentarzu
 	}
 }
 
