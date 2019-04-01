@@ -1,7 +1,8 @@
-/Debug/
+STM/Debug/
 *.d
 *.o
 *.elf
 *.hex
 *.mk
 *.map
+STM/.settings
