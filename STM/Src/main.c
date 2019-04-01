@@ -41,24 +41,29 @@
 #include "stm32f4xx_hal.h"
 
 /* USER CODE BEGIN Includes */
+
 #define kiss_fft_scalar float
 #include "lis3dsh.h"
 #include "stm32_tm1637.h"
 #include "kiss_fft.h"
 #include "fft_compat.h"
+
 /* USER CODE END Includes */
 
 /* Private variables ---------------------------------------------------------*/
-SPI_HandleTypeDef hspi1;
 
+SPI_HandleTypeDef hspi1;
 TIM_HandleTypeDef htim3;
 
 /* USER CODE BEGIN PV */
 /* Private variables ---------------------------------------------------------*/
+
 float accX, accY, accZ, out[4];
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
+
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_SPI1_Init(void);
@@ -66,16 +71,20 @@ static void MX_TIM3_Init(void);
 
 /* USER CODE BEGIN PFP */
 /* Private function prototypes -----------------------------------------------*/
-#define N 64 	//ilosc probek
-int STEPS = 0;
-int8_t PAUSE = 0;
 
-double sample[N] = {0.0};
-float comp[2*N] = {0.0};
-float mag[N] = {0.0};
-uint8_t results = 0;
+
+int kroki = 0;
+int8_t stop = 0;
+
+double probki[64] = {0.0};
+float comp[128] = {0.0};
+float mag[64] = {0.0};
+
+uint8_t wyniki = 0;
 double maxvalue;
 uint32_t maxvalueindex;
+
+
 
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim){
    	if(htim->Instance == TIM3)
@@ -84,67 +93,78 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim){
    		accX = out[0];
    		accY = out[1];
    		accZ = out[2];
-		if (results < N){
+
+		if (wyniki < 64){
 			float x = accX;
 			float y = accY;
 			float z = accZ;
-			sample[results++] = x + y + z;
+			probki[wyniki++] = x+y+z;
 		}
-		else CheckStep();
+		else CzyKrok();
     }
 }
 
-void CheckStep(){
+void CzyKrok(){
+
+	// Wy³¹czamy timer by moc zrobic odczyt bez kolejnego przerwania
 	HAL_TIM_Base_Stop_IT(&htim3);
 
-	uint8_t it=0;
-	for(int i=0; i<2*N; i+=2){
-		comp[i] = (float) sample[it++];
+	uint8_t u = 0;
+
+	for(int i = 0; i < 128; i = i + 2){
+		comp[i] = (float) probki[u++];
 	}
 
-	kiss_fft_cfg cfg = kiss_fft_alloc( N , 0, 0, 0 );
+
+	// Transformata
+	kiss_fft_cfg cfg = kiss_fft_alloc(64, 0, 0, 0);
 
 
-	kiss_fft( cfg , comp , comp );
+	kiss_fft(cfg, comp, comp);
 
 	free(cfg);
 	comp[0] = 0;
 
 
-	arm_cmplx_mag_squared_f32(comp, mag, N);
+	// Modu³ liczby zespolonej
+	arm_cmplx_mag_squared_f32(comp, mag, 64);
 	mag[0] = 0;
 
 
-	arm_max_f32(mag, N, &maxvalue, &maxvalueindex);
+	// Maksymalna wartosc
+	arm_max_f32(mag, 64, &maxvalue, &maxvalueindex);
 
-	if(mag[2]>20000000){
-		if(PAUSE==0){
-			sendStep(++STEPS);
-			PAUSE=1;
-		} else PAUSE = 0;
-	} else PAUSE = 0;
 
-	Clear();
+	if(mag[2] > 20000000){
+		if(stop == 0){
+			sendStep(++kroki);
+			stop = 1;
+		} else stop = 0;
+	} else stop = 0;
 
+
+	// Porz¹dki
+	for(int i=0;i<64;i++){
+		probki[i] = 0;
+	}
+
+	for(int i=0;i<2*64;i++){
+		comp[i] = 0;
+	}
+
+	wyniki = 0;
+
+
+	// W³¹czamy timer
 	HAL_TIM_Base_Start_IT(&htim3);
 }
 
 
-void Clear(){
-
-	for(int i=0;i<N;i++){
-		sample[i] = 0;
-		}
-	for(int i=0;i<2*N;i++){
-		comp[i] = 0;
-	}
-	results = 0;
-}
-
 
 void sendStep(int step){
 
-	 tm1637DisplayInt(step, 0);
+	// Wyœwietlanie
+	 tm1637DisplayDecimal(step, 0);
 }
 
 
@@ -185,12 +205,16 @@ int main(void)
   MX_GPIO_Init();
   MX_SPI1_Init();
   MX_TIM3_Init();
+
+
   /* USER CODE BEGIN 2 */
   tm1637Init();
   tm1637SetBrightness(3);
   tm1637DisplayDecimal(0, 0);
   LISInit();
   HAL_TIM_Base_Start_IT(&htim3);
+
+
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -211,6 +235,17 @@ int main(void)
   * @brief System Clock Configuration
   * @retval None
   */
+
+
+
+
+
+
+
+
+
+
+
 void SystemClock_Config(void)
 {
 
