@@ -51,8 +51,8 @@
 /* USER CODE END Includes */
 
 /* Private variables ---------------------------------------------------------*/
-
 SPI_HandleTypeDef hspi1;
+
 TIM_HandleTypeDef htim3;
 
 /* USER CODE BEGIN PV */
@@ -63,7 +63,6 @@ float accX, accY, accZ, out[4];
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
-
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_SPI1_Init(void);
@@ -205,8 +204,6 @@ int main(void)
   MX_GPIO_Init();
   MX_SPI1_Init();
   MX_TIM3_Init();
-
-
   /* USER CODE BEGIN 2 */
   tm1637Init();
   tm1637SetBrightness(3);
@@ -235,17 +232,6 @@ int main(void)
   * @brief System Clock Configuration
   * @retval None
   */
-
-
-
-
-
-
-
-
-
-
-
 void SystemClock_Config(void)
 {
 
