@@ -1,6 +1,8 @@
 package com.example.test;
 
 
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.app.AlertDialog;
@@ -10,7 +12,9 @@ import android.content.SharedPreferences;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import java.util.Set;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -22,12 +26,12 @@ public class MainActivity extends AppCompatActivity {
     private Button connect;
     private Button reset;
 
+    private BluetoothAdapter blueAdapt;
 
     SharedPreferences SaveData;
 
     private static final String SaveGame = "Game saved";
     private static final String SaveSteps = "Steps saved";
-
 
     AlertDialog.Builder alertDialogBuilder;
     AlertDialog.Builder alertDialogBuilder2;
@@ -94,21 +98,23 @@ public class MainActivity extends AppCompatActivity {
 
         alertDialogBuilder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
             @Override
-            public void onClick(DialogInterface arg0, int arg1) {   // TO TEŻ NIE DZIAŁA
-                //steps.setText("0");
-                //setSaveBut();
+            public void onClick(DialogInterface arg0, int arg1) {
+                SharedPreferences.Editor preferencesEditor = SaveData.edit();
+                preferencesEditor.putString(SaveSteps,"0");
+                preferencesEditor.commit();
+                Toast.makeText(getApplicationContext(), "Data has been reset", Toast.LENGTH_LONG).show();
             }
         });
 
         alertDialogBuilder.setNegativeButton("No", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                // tu coś zrobić
+                Toast.makeText(getApplicationContext(), "Data has not been reset", Toast.LENGTH_LONG).show();
             }
         });
-    }           // to do
+    }
 
-    private void alertExit(){
+    private void alertExit(){                              // zmienione do testów
         alertDialogBuilder2 = new AlertDialog.Builder(this);
         alertDialogBuilder2.setTitle("EXIT");
         alertDialogBuilder2.setMessage("Do you want to save your progress?");
@@ -120,14 +126,18 @@ public class MainActivity extends AppCompatActivity {
 
                 steps = (TextView)findViewById(R.id.stepsView);
 
+                SharedPreferences.Editor preferencesEditor = SaveData.edit();   // tylko do testu
 
-                if (steps != null){
+                /*if (steps != null){
                     SharedPreferences.Editor preferencesEditor = SaveData.edit();
 
                     String savedsteps = steps.getText().toString();
                     preferencesEditor.putString(SaveSteps, savedsteps);
                     preferencesEditor.commit();
-                }
+                } */
+
+                preferencesEditor.putString(SaveSteps, "502");             // tylko do testu
+                preferencesEditor.commit();                           // tylko do testu
 
                 android.os.Process.killProcess(android.os.Process.myPid());
                 System.exit(1);
@@ -148,6 +158,57 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+
+
+    private void ConnectBluetooth(){                                                    // https://developer.android.com/reference/android/bluetooth/BluetoothAdapter
+
+        blueAdapt = BluetoothAdapter.getDefaultAdapter();                               // wyszukuje dostępne urządzenia Bluetooth
+
+        if (blueAdapt == null) { Toast.makeText(getApplicationContext(), "Bluetooth is not supported", Toast.LENGTH_LONG).show();  return ;}
+
+        if (!IsBlueEnabled()) {                                                         // jeśli nie jest dostępny, sprawdza co jakiś czas czy się pojawił
+
+            Intent enab = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);           // Pozwala użytkownikowi włączyć Bluetooth
+            startActivityForResult(enab, 1);                                //  REQUEST_ENABLE_BT
+
+            try { TimeUnit.MILLISECONDS.sleep(250); }                           // Czas po jakim próbuje połączyć się ponownie
+            catch (InterruptedException e) { e.printStackTrace(); }
+        }
+
+        BluetoothDevice device = getBlue();
+
+        if (device == null) {
+            Toast.makeText(getApplicationContext(), "Connection is not possible", Toast.LENGTH_LONG).show();
+            return;
+        }
+
+        Toast.makeText(getApplicationContext(), device.getName() + " connected!", Toast.LENGTH_LONG).show();
+        (new Bluetooth(device, steps)).start();
+
+    }
+
+    private boolean IsBlueEnabled() {
+
+        if (!blueAdapt.isEnabled()) { return false; }
+
+        Toast.makeText(getApplicationContext(), "Bluetooth enabled", Toast.LENGTH_LONG).show();
+        return true;
+    }
+
+    private BluetoothDevice getBlue() {
+        Set <BluetoothDevice> dev = blueAdapt.getBondedDevices();        // Return the set of BluetoothDevice objects that are bonded (paired) to the local adapter.
+        if (dev.size() > 0) {
+            for (BluetoothDevice d : dev) {
+                if (d.getName().equals("HC-05")) {
+                    return d;
+                }
+            }
+        }
+        return null;
+    }
+
+
+
     private void setPlayBut() {
         Intent intent = new Intent(this, Game_mode.class);
         startActivity(intent);
@@ -161,12 +222,12 @@ public class MainActivity extends AppCompatActivity {
     private void setSettingsBut() {
 
 
-    }           // to do
+    }           // to do LATER
 
     private void setConnectBut() {
 
-
-    }           // to do
+        ConnectBluetooth();
+    }         // do sprawdzenia na telefonie
 
     private void setResetBut(){
         AlertDialog alertDialog = alertDialogBuilder.create();
