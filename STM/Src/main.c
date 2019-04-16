@@ -42,12 +42,12 @@
 
 /* USER CODE BEGIN Includes */
 
-#define kiss_fft_scalar float
+#define kiss_fft_scalar 	float
+
 #include "lis3dsh.h"
 #include "stm32_tm1637.h"
 #include "kiss_fft.h"
 #include "fft_compat.h"
-
 /* USER CODE END Includes */
 
 /* Private variables ---------------------------------------------------------*/
@@ -55,18 +55,22 @@ SPI_HandleTypeDef hspi1;
 
 TIM_HandleTypeDef htim3;
 
+UART_HandleTypeDef huart3;
+
 /* USER CODE BEGIN PV */
 /* Private variables ---------------------------------------------------------*/
 
 float accX, accY, accZ, out[4];
 
+char buffer[5];
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
-static void MX_SPI1_Init(void);
 static void MX_TIM3_Init(void);
+static void MX_SPI1_Init(void);
+static void MX_USART3_UART_Init(void);
 
 /* USER CODE BEGIN PFP */
 /* Private function prototypes -----------------------------------------------*/
@@ -134,7 +138,7 @@ void CzyKrok(){
 	arm_max_f32(mag, 64, &maxvalue, &maxvalueindex);
 
 
-	if(mag[2] > 20000000){
+	if(mag[2] > 50000000){
 		if(stop == 0){
 			sendStep(++kroki);
 			stop = 1;
@@ -159,11 +163,12 @@ void CzyKrok(){
 }
 
 
-
 void sendStep(int step){
 
 	// Wyœwietlanie
-	 tm1637DisplayDecimal(step, 0);
+	sprintf(buffer,"%d", step);
+	HAL_UART_Transmit_IT(&huart3, (uint8_t*)buffer, 4);
+	//tm1637DisplayDecimal(step, 0);
 }
 
 
@@ -202,15 +207,15 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
-  MX_SPI1_Init();
   MX_TIM3_Init();
+  MX_SPI1_Init();
+  MX_USART3_UART_Init();
   /* USER CODE BEGIN 2 */
   tm1637Init();
   tm1637SetBrightness(3);
   tm1637DisplayDecimal(0, 0);
   LISInit();
   HAL_TIM_Base_Start_IT(&htim3);
-
 
   /* USER CODE END 2 */
 
@@ -341,6 +346,25 @@ static void MX_TIM3_Init(void)
 
 }
 
+/* USART3 init function */
+static void MX_USART3_UART_Init(void)
+{
+
+  huart3.Instance = USART3;
+  huart3.Init.BaudRate = 9600;
+  huart3.Init.WordLength = UART_WORDLENGTH_8B;
+  huart3.Init.StopBits = UART_STOPBITS_1;
+  huart3.Init.Parity = UART_PARITY_NONE;
+  huart3.Init.Mode = UART_MODE_TX_RX;
+  huart3.Init.HwFlowCtl = UART_HWCONTROL_NONE;
+  huart3.Init.OverSampling = UART_OVERSAMPLING_16;
+  if (HAL_UART_Init(&huart3) != HAL_OK)
+  {
+    _Error_Handler(__FILE__, __LINE__);
+  }
+
+}
+
 /** Configure pins as 
         * Analog 
         * Input 
@@ -358,6 +382,7 @@ static void MX_GPIO_Init(void)
   __HAL_RCC_GPIOH_CLK_ENABLE();
   __HAL_RCC_GPIOC_CLK_ENABLE();
   __HAL_RCC_GPIOA_CLK_ENABLE();
+  __HAL_RCC_GPIOB_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOE, GPIO_PIN_3, GPIO_PIN_RESET);
