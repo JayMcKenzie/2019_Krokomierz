@@ -89,6 +89,7 @@ float mag[64] = {0.0};
 uint8_t wyniki = 0;
 double maxvalue;
 uint32_t maxvalueindex;
+int krokiCache = 0;
 
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
    if(huart->Instance == USART3){
@@ -180,8 +181,8 @@ void sendStep(){
 
 	// Wyœwietlanie
 	//sprintf(buffer,"%d", step);
-
-	HAL_UART_Transmit_IT(&huart3, (uint8_t*)(&kroki), 4);
+	krokiCache = kroki;
+	HAL_UART_Transmit_IT(&huart3, (uint8_t*)(&krokiCache), 4);
 	kroki = 0;
 	//tm1637DisplayDecimal(step, 0);
 }

@@ -14,12 +14,16 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.text.SimpleDateFormat;
+import java.util.Hashtable;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 
 public class MainActivity extends AppCompatActivity {
 
     private TextView steps;
+    private TextView date;
     private Button play;
     private Button settings;
     private Button exit;
@@ -32,9 +36,15 @@ public class MainActivity extends AppCompatActivity {
 
     private static final String SaveGame = "Game saved";
     private static final String SaveSteps = "Steps saved";
+    private static final String SaveDate = "Date saved";
 
     AlertDialog.Builder alertDialogBuilder;
     AlertDialog.Builder alertDialogBuilder2;
+
+    Hashtable <SimpleDateFormat, Boolean> checkdate = new Hashtable <SimpleDateFormat, Boolean>();
+
+    SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
+    String str_date;
 
 
     @Override
@@ -48,6 +58,9 @@ public class MainActivity extends AppCompatActivity {
         exit = (Button)findViewById(R.id.exit_but);
         connect = (Button)findViewById(R.id.connect_but);
         reset = (Button)findViewById(R.id.reset_but);
+
+
+        checkdate.put(sdf, false);
 
 
         SaveData = getApplicationContext().getSharedPreferences(SaveGame, 0);
@@ -114,7 +127,7 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private void alertExit(){                              // zmienione do testów
+    private void alertExit(){                              // zmienione do testów       // save hashtable
         alertDialogBuilder2 = new AlertDialog.Builder(this);
         alertDialogBuilder2.setTitle("EXIT");
         alertDialogBuilder2.setMessage("Do you want to save your progress?");
@@ -125,19 +138,30 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(DialogInterface arg0, int arg1) {
 
                 steps = (TextView)findViewById(R.id.stepsView);
+                date = (TextView)findViewById(R.id.dateView);
 
-                SharedPreferences.Editor preferencesEditor = SaveData.edit();   // tylko do testu
+                //SharedPreferences.Editor preferencesEditor = SaveData.edit();   // tylko do testu
 
-                /*if (steps != null){
+                if (steps != null){
                     SharedPreferences.Editor preferencesEditor = SaveData.edit();
 
                     String savedsteps = steps.getText().toString();
                     preferencesEditor.putString(SaveSteps, savedsteps);
-                    preferencesEditor.commit();
-                } */
 
-                preferencesEditor.putString(SaveSteps, "502");             // tylko do testu
-                preferencesEditor.commit();                           // tylko do testu
+                    SharedPreferences.Editor editor = SaveData.edit();
+
+                    //editor.putString("Date", str_date);
+                    //Boolean type_bool = checkdate.get(sdf);
+                    //String type_str =
+                    //editor.putString("Type", type_str);
+
+                    // save hashtable
+
+                    preferencesEditor.commit();
+                }
+
+                //preferencesEditor.putString(SaveSteps, "502");             // tylko do testu
+               // preferencesEditor.commit();                           // tylko do testu
 
                 android.os.Process.killProcess(android.os.Process.myPid());
                 System.exit(1);
@@ -183,7 +207,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         Toast.makeText(getApplicationContext(), device.getName() + " connected!", Toast.LENGTH_LONG).show();
-        (new Bluetooth(device, steps)).start();
+        (new Bluetooth(device, steps, checkdate)).start();
 
     }
 
@@ -227,7 +251,7 @@ public class MainActivity extends AppCompatActivity {
     private void setConnectBut() {
 
         ConnectBluetooth();
-    }         // do sprawdzenia na telefonie
+    }
 
     private void setResetBut(){
         AlertDialog alertDialog = alertDialogBuilder.create();
@@ -235,6 +259,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+    private void isAlive(){
+
+
+    }
 
 }
 
