@@ -61,8 +61,11 @@ UART_HandleTypeDef huart3;
 /* Private variables ---------------------------------------------------------*/
 
 float accX, accY, accZ, out[4];
+uint8_t receiveUART[1];
+uint16_t sizeReceiveUART = 1;
+char toSend[5] = { 0,0,0,0,0 };
 
-char buffer[5];
+//char buffer[5];
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -87,6 +90,15 @@ uint8_t wyniki = 0;
 double maxvalue;
 uint32_t maxvalueindex;
 
+void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
+   if(huart->Instance == USART3){
+	   char odb = receiveUART[0];
+	   if(odb == 'Z') {
+		   sendStep();
+	   }
+       HAL_UART_Receive_IT(&huart3, receiveUART, sizeReceiveUART);
+   }
+}
 
 
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim){
@@ -140,7 +152,8 @@ void CzyKrok(){
 
 	if(mag[2] > 50000000){
 		if(stop == 0){
-			sendStep(++kroki);
+			kroki++;
+			//sendStep(++kroki);
 			stop = 1;
 		} else stop = 0;
 	} else stop = 0;
@@ -163,11 +176,13 @@ void CzyKrok(){
 }
 
 
-void sendStep(int step){
+void sendStep(){
 
 	// Wyœwietlanie
-	sprintf(buffer,"%d", step);
-	HAL_UART_Transmit_IT(&huart3, (uint8_t*)buffer, 4);
+	//sprintf(buffer,"%d", step);
+
+	HAL_UART_Transmit_IT(&huart3, (uint8_t*)(&kroki), 4);
+	kroki = 0;
 	//tm1637DisplayDecimal(step, 0);
 }
 
@@ -215,7 +230,9 @@ int main(void)
   tm1637SetBrightness(3);
   tm1637DisplayDecimal(0, 0);
   LISInit();
+  HAL_UART_Receive_IT(&huart3, receiveUART, sizeReceiveUART);
   HAL_TIM_Base_Start_IT(&htim3);
+
 
   /* USER CODE END 2 */
 
