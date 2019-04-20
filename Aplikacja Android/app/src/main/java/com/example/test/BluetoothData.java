@@ -51,18 +51,19 @@ public class BluetoothData extends Thread {
         while (true) {
             try
             {
-                //Thread.sleep(1000);
                 byte[] buffer = new byte[4];
                 inputstream.read(buffer);
                 //byte[] steps_bytes = Arrays.copyOfRange(buffer, 0, 4);
-                String pk = "Pakiet: ";
+
+                String pk = "Pakiet: ";           // kontrolne wyświetlenie działania w konsoli
                 for(byte b : buffer) {
                     pk += String.format(" %02x", (int)b);
                 }
                 Log.d(TAG, pk);
+
                 if(true)
                 {
-                    Integer num = java.nio.ByteBuffer.wrap(buffer).order(java.nio.ByteOrder.LITTLE_ENDIAN).getInt();
+                    Integer num = java.nio.ByteBuffer.wrap(buffer).order(java.nio.ByteOrder.LITTLE_ENDIAN).getInt();       // odebrane dane - zamienia na int
 
                     if (num.equals(0))
                         continue;
@@ -78,17 +79,7 @@ public class BluetoothData extends Thread {
                             }
                         });
                     }
-
-                    // 1 bajt char - typ wiadomosci
-                    // - Zapytanie o stan (albo stm zeruje licznik albo osobny pakiet z resetem licznika)
-                    // - Liczba krokow (wysyla stm)
-                    // 4 bajty - libzba krokow int
-                    // apka pyta stma o ilosc krokow - raz na sekunde - zeruje sie licznik stma
-                    // dodaje to do krokow w apce
-                    // apka ma umiec wysyłać dane
-                    // :)
                 }
-
             }
             catch (Throwable e)
             {
@@ -116,7 +107,7 @@ public class BluetoothData extends Thread {
             }
         });
 
-    }
+    }   // nie jest używane i raczej do wywalenia
 
 }
 

@@ -15,7 +15,7 @@ import java.util.Hashtable;
 
 public class BluetoothSender extends Thread {
 
-    private static final String TAG = "3";
+    private static final String TAG = "4";
     private final OutputStream outputstream;                       // wysyla dane do urządzenia
 
     public BluetoothSender(BluetoothSocket socket) {

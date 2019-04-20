@@ -45,7 +45,7 @@ public class Bluetooth extends Thread{                            // Book: The A
         }
         catch (IOException ee) { Reconnect(); }
 
-        (new BluetoothData(socket, currentsteps, checkdate)).start(); // to do
+        (new BluetoothData(socket, currentsteps, checkdate)).start();
         (new BluetoothSender(socket)).start();
     }
 
