@@ -241,7 +241,7 @@ public class MainActivity extends AppCompatActivity {
     private void setExitBut() {
         AlertDialog alertDialog = alertDialogBuilder2.create();
         alertDialog.show();
-    }
+    }           // to do - przy yes nadal resetuje
 
     private void setSettingsBut() {
 
@@ -256,7 +256,7 @@ public class MainActivity extends AppCompatActivity {
     private void setResetBut(){
         AlertDialog alertDialog = alertDialogBuilder.create();
         alertDialog.show();
-    }
+    }          // to do - przy yes nie resetuje
 
 
     private void isAlive(){
