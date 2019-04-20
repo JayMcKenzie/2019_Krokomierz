@@ -47,6 +47,9 @@ public class MainActivity extends AppCompatActivity {
     String str_date;
 
 
+    Database database;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -99,6 +102,8 @@ public class MainActivity extends AppCompatActivity {
 
         alertReset();
         alertExit();
+
+        database = new Database(this);
 
     }
 
