@@ -23,15 +23,13 @@ public class BluetoothData extends Thread {
     private TextView currentsteps;
     public int steps_int;
     private ImageView image;
-    Hashtable<SimpleDateFormat, Boolean> checkdate;
     SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
 
 
 
-    public BluetoothData(BluetoothSocket socket, TextView tab, Hashtable<SimpleDateFormat, Boolean> checkdate) {
+    public BluetoothData(BluetoothSocket socket, TextView tab) {
 
         this.currentsteps = tab;
-        this.checkdate = checkdate;
 
 
         InputStream in = null;
@@ -101,7 +99,7 @@ public class BluetoothData extends Thread {
                 currentsteps.setText(Integer.toString(steps_int));
 
                 if(steps_int >= 10000){
-                    checkdate.put(sdf, true);
+                    //checkdate.put(sdf, true);
                 }
 
             }

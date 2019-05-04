@@ -1,5 +1,7 @@
 package com.example.test;
+import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
@@ -23,7 +25,6 @@ public class Database extends SQLiteOpenHelper {
 
     public Database(Context context) {
         super(context, DATABASE_NAME, null, 1);
-        SQLiteDatabase db = this.getWritableDatabase();
     }
 
 
@@ -36,6 +37,27 @@ public class Database extends SQLiteOpenHelper {
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL(DB_DROP);
         onCreate(db);
-
     }
+
+    public boolean insertData(String date, String steps) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValue = new ContentValues();
+        contentValue.put(DATE_COL, date);
+        contentValue.put(STEPS_COL, steps);
+        long result = db.insert(TABLE_NAME, null, contentValue);
+
+        if (result == -1) {
+            return false;
+        }                             // "insert" zwraca -1 jeśli jest error
+        else {
+            return true;
+        }
+    }
+
+    public Cursor getAllData(){
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery("select * from " + TABLE_NAME, null);
+        return cursor;
+    }
+
 }

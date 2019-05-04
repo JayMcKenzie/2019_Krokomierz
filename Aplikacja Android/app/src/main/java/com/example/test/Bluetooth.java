@@ -20,14 +20,12 @@ public class Bluetooth extends Thread{                            // Book: The A
     private final BluetoothDevice dev;
     private BluetoothSocket socket;
     private final UUID MY_UUID = UUID.fromString("128b9355-c1a1-4491-bb6d-0cbc2093abac");          // https://www.uuidgenerator.net/
-    Hashtable<SimpleDateFormat, Boolean> checkdate;
 
 
-    public Bluetooth(BluetoothDevice blue, TextView tab, Hashtable<SimpleDateFormat, Boolean> checkdate) {
+    public Bluetooth(BluetoothDevice blue, TextView tab) {
 
         this.currentsteps = tab;
         this.dev = blue;
-        this.checkdate = checkdate;
         BluetoothSocket temp = null;
 
         try {
@@ -45,7 +43,7 @@ public class Bluetooth extends Thread{                            // Book: The A
         }
         catch (IOException ee) { Reconnect(); }
 
-        (new BluetoothData(socket, currentsteps, checkdate)).start();
+        (new BluetoothData(socket, currentsteps)).start();
         (new BluetoothSender(socket)).start();
     }
 

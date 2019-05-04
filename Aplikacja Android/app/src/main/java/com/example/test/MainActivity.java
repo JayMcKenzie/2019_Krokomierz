@@ -3,6 +3,7 @@ package com.example.test;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
+import android.database.Cursor;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.app.AlertDialog;
@@ -25,7 +26,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView steps;
     private TextView date;
     private Button play;
-    private Button settings;
+    private Button data;
     private Button exit;
     private Button connect;
     private Button reset;
@@ -41,13 +42,7 @@ public class MainActivity extends AppCompatActivity {
     AlertDialog.Builder alertDialogBuilder;
     AlertDialog.Builder alertDialogBuilder2;
 
-    Hashtable <SimpleDateFormat, Boolean> checkdate = new Hashtable <SimpleDateFormat, Boolean>();
-
     SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
-    String str_date;
-
-
-    Database database;
 
 
     @Override
@@ -57,13 +52,10 @@ public class MainActivity extends AppCompatActivity {
 
         steps = (TextView)findViewById(R.id.stepsView);
         play = (Button)findViewById(R.id.play_but);
-        settings = (Button)findViewById(R.id.settings_but);
+        data = (Button)findViewById(R.id.data_but);
         exit = (Button)findViewById(R.id.exit_but);
         connect = (Button)findViewById(R.id.connect_but);
         reset = (Button)findViewById(R.id.reset_but);
-
-
-        checkdate.put(sdf, false);
 
 
         SaveData = getApplicationContext().getSharedPreferences(SaveGame, 0);
@@ -82,9 +74,9 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        settings.setOnClickListener(new View.OnClickListener() {
+        data.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                setSettingsBut();
+                setDataBut();
             }
         });
 
@@ -102,8 +94,6 @@ public class MainActivity extends AppCompatActivity {
 
         alertReset();
         alertExit();
-
-        database = new Database(this);
 
     }
 
@@ -132,41 +122,16 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private void alertExit(){                              // zmienione do testów       // save hashtable
+    private void alertExit(){
         alertDialogBuilder2 = new AlertDialog.Builder(this);
         alertDialogBuilder2.setTitle("EXIT");
-        alertDialogBuilder2.setMessage("Do you want to save your progress?");
+        alertDialogBuilder2.setMessage("Are you sure?");
         alertDialogBuilder2.setCancelable(false);
+
 
         alertDialogBuilder2.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface arg0, int arg1) {
-
-                steps = (TextView)findViewById(R.id.stepsView);
-                date = (TextView)findViewById(R.id.dateView);
-
-                //SharedPreferences.Editor preferencesEditor = SaveData.edit();   // tylko do testu
-
-                if (steps != null){
-                    SharedPreferences.Editor preferencesEditor = SaveData.edit();
-
-                    String savedsteps = steps.getText().toString();
-                    preferencesEditor.putString(SaveSteps, savedsteps);
-
-                    SharedPreferences.Editor editor = SaveData.edit();
-
-                    //editor.putString("Date", str_date);
-                    //Boolean type_bool = checkdate.get(sdf);
-                    //String type_str =
-                    //editor.putString("Type", type_str);
-
-                    // save hashtable
-
-                    preferencesEditor.commit();
-                }
-
-                //preferencesEditor.putString(SaveSteps, "502");             // tylko do testu
-               // preferencesEditor.commit();                           // tylko do testu
 
                 android.os.Process.killProcess(android.os.Process.myPid());
                 System.exit(1);
@@ -177,12 +142,6 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(DialogInterface dialog, int which) {
 
-                SharedPreferences.Editor preferencesEditor = SaveData.edit();
-                preferencesEditor.putString(SaveSteps,"0");
-                preferencesEditor.commit();
-
-                android.os.Process.killProcess(android.os.Process.myPid());
-                System.exit(1);
             }
         });
     }
@@ -212,7 +171,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         Toast.makeText(getApplicationContext(), device.getName() + " connected!", Toast.LENGTH_LONG).show();
-        (new Bluetooth(device, steps, checkdate)).start();
+        (new Bluetooth(device, steps)).start();
 
     }
 
@@ -246,12 +205,12 @@ public class MainActivity extends AppCompatActivity {
     private void setExitBut() {
         AlertDialog alertDialog = alertDialogBuilder2.create();
         alertDialog.show();
-    }           // to do - przy yes nadal resetuje
+    }
 
-    private void setSettingsBut() {
-
-
-    }           // to do LATER
+    private void setDataBut() {
+        /*Intent intent = new Intent(this, Show_data.class);
+        startActivity(intent); */
+    }         // to do - jeszcze nie działa
 
     private void setConnectBut() {
 
@@ -261,13 +220,8 @@ public class MainActivity extends AppCompatActivity {
     private void setResetBut(){
         AlertDialog alertDialog = alertDialogBuilder.create();
         alertDialog.show();
-    }          // to do - przy yes nie resetuje
+    }          // to do - przy yes nie resetuje   // reset bazy danych  // chyba niepotrzebne
 
-
-    private void isAlive(){
-
-
-    }
 
 }
 
