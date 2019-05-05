@@ -3,7 +3,6 @@ package com.example.test;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
-import android.database.Cursor;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.app.AlertDialog;
@@ -15,8 +14,6 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.text.SimpleDateFormat;
-import java.util.Hashtable;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
@@ -24,12 +21,10 @@ import java.util.concurrent.TimeUnit;
 public class MainActivity extends AppCompatActivity {
 
     private TextView steps;
-    private TextView date;
     private Button play;
     private Button data;
     private Button exit;
     private Button connect;
-    private Button reset;
 
     private BluetoothAdapter blueAdapt;
 
@@ -39,11 +34,7 @@ public class MainActivity extends AppCompatActivity {
     private static final String SaveSteps = "Steps saved";
     private static final String SaveDate = "Date saved";
 
-    AlertDialog.Builder alertDialogBuilder;
     AlertDialog.Builder alertDialogBuilder2;
-
-    SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,11 +46,10 @@ public class MainActivity extends AppCompatActivity {
         data = (Button)findViewById(R.id.data_but);
         exit = (Button)findViewById(R.id.exit_but);
         connect = (Button)findViewById(R.id.connect_but);
-        reset = (Button)findViewById(R.id.reset_but);
 
 
-        SaveData = getApplicationContext().getSharedPreferences(SaveGame, 0);
-        System.out.println(SaveData);
+       // SaveData = getApplicationContext().getSharedPreferences(SaveGame, 0);
+        //System.out.println(SaveData);
 
 
         play.setOnClickListener(new View.OnClickListener() {
@@ -86,41 +76,11 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        reset.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                setResetBut();
-            }
-        });
-
-        alertReset();
         alertExit();
 
+        BTStatic.database = new Database(this);
     }
 
-
-    private void alertReset(){
-        alertDialogBuilder = new AlertDialog.Builder(this);
-        alertDialogBuilder.setTitle("RESET");
-        alertDialogBuilder.setMessage("Do you want to reset your progress?");
-        alertDialogBuilder.setCancelable(false);
-
-        alertDialogBuilder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface arg0, int arg1) {
-                SharedPreferences.Editor preferencesEditor = SaveData.edit();
-                preferencesEditor.putString(SaveSteps,"0");
-                preferencesEditor.commit();
-                Toast.makeText(getApplicationContext(), "Data has been reset", Toast.LENGTH_LONG).show();
-            }
-        });
-
-        alertDialogBuilder.setNegativeButton("No", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                Toast.makeText(getApplicationContext(), "Data has not been reset", Toast.LENGTH_LONG).show();
-            }
-        });
-    }
 
     private void alertExit(){
         alertDialogBuilder2 = new AlertDialog.Builder(this);
@@ -145,7 +105,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
-
 
 
     private void ConnectBluetooth(){                                                    // https://developer.android.com/reference/android/bluetooth/BluetoothAdapter
@@ -196,7 +155,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-
     private void setPlayBut() {
         Intent intent = new Intent(this, Game_mode.class);
         startActivity(intent);
@@ -208,20 +166,14 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setDataBut() {
-        /*Intent intent = new Intent(this, Show_data.class);
-        startActivity(intent); */
-    }         // to do - jeszcze nie działa
+        Intent intent = new Intent(this, Show_data.class);
+        startActivity(intent);
+    }
 
     private void setConnectBut() {
 
         ConnectBluetooth();
     }
-
-    private void setResetBut(){
-        AlertDialog alertDialog = alertDialogBuilder.create();
-        alertDialog.show();
-    }          // to do - przy yes nie resetuje   // reset bazy danych  // chyba niepotrzebne
-
 
 }
 

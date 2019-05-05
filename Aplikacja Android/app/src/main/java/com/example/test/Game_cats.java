@@ -1,46 +1,27 @@
 package com.example.test;
 
-import android.content.Context;
-import android.content.Intent;
-import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.AttributeSet;
-import android.util.Xml;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import org.xmlpull.v1.XmlPullParser;
-
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
-import java.util.Hashtable;
 
 
 public class Game_cats extends AppCompatActivity {
 
     private TextView steps;
-    private TextView date;
     private Button save;
 
     ImageView image;
 
-    //Database database;
-
-    SharedPreferences SaveData;
-    private static final String SaveGame = "Game saved";
-    private static final String SaveSteps = "Steps saved";
-
-  //  Date currentTime = Calendar.getInstance().getTime();
-
     SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
     String currentDateandTime = sdf.format(new Date());
-
-   // Hashtable <SimpleDateFormat, Boolean> checkdate = new Hashtable <SimpleDateFormat, Boolean>();
 
 
     @Override
@@ -55,39 +36,16 @@ public class Game_cats extends AppCompatActivity {
         image.setImageResource(R.drawable.kitty);
 
         save = (Button)findViewById(R.id.save_but);
-
         save.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 setSaveBut();
             }
         });
 
-        SaveData = getApplicationContext().getSharedPreferences(SaveGame, 0);                     // pobiera tekst z pliku i zapisze w apce
-        String st1 = SaveData.getString(SaveSteps, "0");                                       // pobiera kroki z pliku i zapisze w apce
-        steps.setText(st1);
-
-
-        TextView yourtextview = (TextView) findViewById(R.id.dateView);
-        yourtextview.setText(currentDateandTime);
-
-        String savedsteps = steps.getText().toString();
-        String savedsate = yourtextview.getText().toString();
-
-        BTStatic.database = new Database(this);
-
-
-       /* if(savedsteps == "14"){
-             BTStatic.database.insertData(savedsteps, savedsate);
-        }
-        */
-
-        //BTStatic.database
-
-
-
-
-
-
+        String st = showSteps();
+        steps.setText(st);
+        int sti = Integer.parseInt(st);
+        BTStatic.currentSteps = sti;
 
     }
 
@@ -95,26 +53,20 @@ public class Game_cats extends AppCompatActivity {
     private void setSaveBut() {
 
         steps = (TextView)findViewById(R.id.stepsView);
-        date = (TextView)findViewById(R.id.dateView);
 
         System.out.println("Steps: " + steps);
 
         if (steps != null){
 
-            System.out.println("W ifie");
-
             String savedsteps = steps.getText().toString();
-            String savedsate = date.getText().toString();
+            String savedsate = currentDateandTime;
 
+            System.out.println("Date: " + savedsate);      // test
+            System.out.println("Steps: " + savedsteps);       // test
 
-            System.out.println("Date: " + savedsate);
-            System.out.println("Steps: " + savedsteps);
-
-            System.out.println("Przed insert");
 
             boolean isInserted = BTStatic.database.insertData(savedsate, savedsteps);
 
-            System.out.println("Po insert");
 
             if (isInserted = true){
                 Toast.makeText(Game_cats.this, "Data Inserted", Toast.LENGTH_LONG).show();
@@ -124,4 +76,23 @@ public class Game_cats extends AppCompatActivity {
             }
         }
     }
+
+    private String showSteps(){
+
+        Cursor res = BTStatic.database.getAllData();
+
+        if(res.getCount() == 0) {
+            Toast.makeText(getApplicationContext(), "Database is empty", Toast.LENGTH_LONG).show();
+            return "0";
+        }
+
+        while(res.moveToNext()){
+            if(currentDateandTime.equals(res.getString(1))){
+                return res.getString(2);
+            }
+        }
+
+        return "1";
+    }
+
 }

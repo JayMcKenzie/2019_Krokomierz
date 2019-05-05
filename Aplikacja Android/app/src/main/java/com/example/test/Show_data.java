@@ -1,54 +1,46 @@
 package com.example.test;
 
-import android.content.SharedPreferences;
-import android.database.Cursor;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.TextView;
-import android.widget.Toast;
-
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 
 public class Show_data extends AppCompatActivity {
+
+    private Button cats;
+    private Button cars;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.show_database);
+        setContentView(R.layout.activity_game_mode);
 
-        cursor();
 
-        // tu jakoś to wyświetlić, ale nie oknem dialogowym :c
+        cats = (Button)findViewById(R.id.cats_but);
+        cars = (Button)findViewById(R.id.cars_but);
 
+        cats.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {setCatsBut();}
+        });
+
+        cars.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {setCarsBut();}
+        });
     }
 
 
-    public void cursor(){
-        Cursor res = BTStatic.database.getAllData();
+    private void setCatsBut() {
+        Intent intent = new Intent(this, Show_data_cats.class);
+        startActivity(intent);
+    }
 
-        if(res.getCount() == 0) {
-            Toast.makeText(getApplicationContext(), "Database is empty", Toast.LENGTH_LONG).show();
-            return;
-        }
+    private void setCarsBut() {
 
-        StringBuffer buffer = new StringBuffer();
-
-        while(res.moveToNext()){
-            buffer.append("Id: " + res.getString(0) + "\n");
-            buffer.append("Date: " + res.getString(1) + "\n");
-            buffer.append("Steps: " + res.getString(2) + "\n\n");
-        }
 
     }
 
-    public void showMessage(String title, String Message){
-
-    }
 
 }

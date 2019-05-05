@@ -60,35 +60,17 @@
         app:layout_constraintVertical_bias="0.821"
         app:srcCompat="@drawable/kitty" />
 
-    <TextView
-        android:id="@+id/dateView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/Pic"
-        android:layout_alignStart="@+id/Pic"
-        android:layout_marginTop="0dp"
-        android:text="0"
-        android:textAlignment="center"
-        android:textColor="#ffffff"
-        android:textSize="18sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.146" />
-
 
     <Button
         android:id="@+id/save_but"
         android:layout_width="100dp"
-        android:layout_height="60dp"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
+        android:layout_height="50dp"
         android:layout_alignParentBottom="true"
-        android:layout_marginEnd="49dp"
-        android:layout_marginRight="49dp"
-        android:layout_marginBottom="62dp"
+        android:layout_marginEnd="52dp"
+        android:layout_marginRight="52dp"
+        android:layout_marginBottom="44dp"
         android:background="@drawable/buttons"
+        android:layout_centerHorizontal="true"
         android:padding="10dp"
         android:text="Save"
         app:layout_constraintBottom_toBottomOf="parent"

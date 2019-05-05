@@ -4,8 +4,6 @@ import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.util.Log;
 
-import java.text.SimpleDateFormat;
-import java.util.Hashtable;
 import java.util.UUID;
 import android.widget.TextView;
 import java.io.IOException;

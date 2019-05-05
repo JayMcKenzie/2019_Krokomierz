@@ -7,6 +7,4 @@ public class BTStatic {
     public static Integer currentSteps = 0;
     public static Database database;
 
-
-
 }

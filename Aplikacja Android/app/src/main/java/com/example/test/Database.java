@@ -5,6 +5,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+
 public class Database extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "Krokomierz.db";
@@ -46,9 +47,9 @@ public class Database extends SQLiteOpenHelper {
         contentValue.put(STEPS_COL, steps);
         long result = db.insert(TABLE_NAME, null, contentValue);
 
-        if (result == -1) {
+        if (result == -1) {                                                                      // "insert" zwraca -1 jeśli jest error
             return false;
-        }                             // "insert" zwraca -1 jeśli jest error
+        }
         else {
             return true;
         }

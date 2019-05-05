@@ -2,17 +2,10 @@ package com.example.test;
 
 import android.bluetooth.BluetoothSocket;
 import android.util.Log;
-import android.widget.ImageView;
 import android.widget.TextView;
 
-import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
-import java.nio.ByteBuffer;
-import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.Hashtable;
 
 
 public class BluetoothData extends Thread {
@@ -21,16 +14,11 @@ public class BluetoothData extends Thread {
 
     private final InputStream inputstream;                       // pobiera dane z urządzenia
     private TextView currentsteps;
-    public int steps_int;
-    private ImageView image;
-    SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
-
 
 
     public BluetoothData(BluetoothSocket socket, TextView tab) {
 
         this.currentsteps = tab;
-
 
         InputStream in = null;
 
@@ -53,7 +41,7 @@ public class BluetoothData extends Thread {
                 inputstream.read(buffer);
                 //byte[] steps_bytes = Arrays.copyOfRange(buffer, 0, 4);
 
-                String pk = "Pakiet: ";           // kontrolne wyświetlenie działania w konsoli
+                String pk = "Pakiet: ";                              // kontrolne wyświetlenie działania w konsoli
                 for(byte b : buffer) {
                     pk += String.format(" %02x", (int)b);
                 }
@@ -69,7 +57,6 @@ public class BluetoothData extends Thread {
                     BTStatic.currentSteps += num;
                     final String dane = BTStatic.currentSteps.toString();
 
-                    //UpdateSteps();
                     if (BTStatic.steps != null) {
                         BTStatic.steps.post(new Runnable() {
                             public void run() {
@@ -86,26 +73,6 @@ public class BluetoothData extends Thread {
             }
         }
     }
-
-
-    private void UpdateSteps() {
-
-        steps_int = Integer.parseInt(currentsteps.getText().toString());
-
-        //steps_int = steps_int + 1;
-        System.out.println("kroki: "+steps_int);
-        currentsteps.post(new Runnable() {
-            public void run() {
-                currentsteps.setText(Integer.toString(steps_int));
-
-                if(steps_int >= 10000){
-                    //checkdate.put(sdf, true);
-                }
-
-            }
-        });
-
-    }   // nie jest używane i raczej do wywalenia
 
 }
 

@@ -17,6 +17,8 @@
         android:theme="@style/AppTheme">
         <activity android:name=".Game_mode"></activity>
         <activity android:name=".Game_cats" />
+        <activity android:name=".Show_data" />
+        <activity android:name=".Show_data_cats" />
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
