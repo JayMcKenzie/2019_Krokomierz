@@ -55,10 +55,27 @@ public class Database extends SQLiteOpenHelper {
         }
     }
 
+
     public Cursor getAllData(){
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery("select * from " + TABLE_NAME, null);
         return cursor;
+    }
+
+
+    public boolean updateData(String date, String steps) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValue = new ContentValues();
+        contentValue.put(DATE_COL, date);
+        contentValue.put(STEPS_COL, steps);
+        db.update(TABLE_NAME, contentValue, "Date = ?", new String[]{date} );
+        return true;
+    }
+
+
+    public Integer deleteData(String date){
+        SQLiteDatabase db = this.getWritableDatabase();
+        return db.delete(TABLE_NAME, "Date = ?", new String[] {date});
     }
 
 }

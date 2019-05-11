@@ -65,17 +65,46 @@ public class Game_cats extends AppCompatActivity {
             System.out.println("Steps: " + savedsteps);       // test
 
 
-            boolean isInserted = BTStatic.database.insertData(savedsate, savedsteps);
+            if(checkDate()){
+                boolean isUpdated = BTStatic.database.updateData(savedsate, savedsteps);
 
-
-            if (isInserted = true){
-                Toast.makeText(Game_cats.this, "Data Inserted", Toast.LENGTH_LONG).show();
+                if (isUpdated = true){
+                    Toast.makeText(Game_cats.this, "Data updated", Toast.LENGTH_LONG).show();
+                }
+                else{
+                    Toast.makeText(Game_cats.this, "Data not updated", Toast.LENGTH_LONG).show();
+                }
             }
             else{
-                Toast.makeText(Game_cats.this, "Data not Inserted", Toast.LENGTH_LONG).show();
+                boolean isInserted = BTStatic.database.insertData(savedsate, savedsteps);
+
+                if (isInserted = true){
+                    Toast.makeText(Game_cats.this, "Data inserted", Toast.LENGTH_LONG).show();
+                }
+                else{
+                    Toast.makeText(Game_cats.this, "Data not inserted", Toast.LENGTH_LONG).show();
+                }
             }
         }
     }
+
+
+    private boolean checkDate(){
+        Cursor res = BTStatic.database.getAllData();
+
+        if(res.getCount() == 0) {
+            Toast.makeText(getApplicationContext(), "Database is empty", Toast.LENGTH_LONG).show();
+            return false;
+        }
+
+        while(res.moveToNext()){
+            if(currentDateandTime.equals(res.getString(1))){           // sprawdza, czy taka data jest już w bazie
+                return true;
+            }
+        }
+        return false;
+    }
+
 
     private String showSteps(){
 
