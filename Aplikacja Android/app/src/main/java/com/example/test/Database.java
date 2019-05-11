@@ -16,7 +16,7 @@ public class Database extends SQLiteOpenHelper {
 
 
     private static final String DB_CREATE =
-            "CREATE TABLE " + TABLE_NAME + "( " + ID_COL + ", " +
+            "CREATE TABLE " + TABLE_NAME + "( " + ID_COL + "INTEGER PRIMARY KEY AUTOINCREMENT" + ", " +
                     DATE_COL + ", " + STEPS_COL + ");";
 
 
@@ -58,7 +58,7 @@ public class Database extends SQLiteOpenHelper {
 
     public Cursor getAllData(){
         SQLiteDatabase db = this.getWritableDatabase();
-        Cursor cursor = db.rawQuery("select * from " + TABLE_NAME, null);
+        Cursor cursor = db.rawQuery("select * from " + TABLE_NAME + " ORDER BY Date DESC;", null);
         return cursor;
     }
 
@@ -76,6 +76,21 @@ public class Database extends SQLiteOpenHelper {
     public Integer deleteData(String date){
         SQLiteDatabase db = this.getWritableDatabase();
         return db.delete(TABLE_NAME, "Date = ?", new String[] {date});
+    }
+
+
+    public Cursor getLast3(){
+        SQLiteDatabase db = this.getWritableDatabase();
+        String query = "Select * from " + TABLE_NAME + " ORDER BY Date DESC limit 3;";
+        Cursor cursor = db.rawQuery(query, null);
+        return cursor;
+    }
+
+    public Cursor getTop(){
+        SQLiteDatabase db = this.getWritableDatabase();
+        String query = "Select * from " + TABLE_NAME + " limit 1;";
+        Cursor cursor = db.rawQuery(query, null);
+        return cursor;
     }
 
 }
