@@ -1,6 +1,9 @@
 package com.example.test;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.database.Cursor;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -20,6 +23,8 @@ public class Game_cats extends AppCompatActivity {
     private TextView steps;
     private TextView stepsText;
     private Button save;
+    private Thread uratujKotka;
+    private BroadcastReceiver receiver;
 
     ImageView image;
 
@@ -32,12 +37,8 @@ public class Game_cats extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game_cats);
 
-
-
         steps = (TextView)findViewById(R.id.stepsView);
         BTStatic.steps = steps;
-
-        System.out.println("dupaaaaaaaaaaaaaaaaaaa" + Integer.parseInt(BTStatic.steps.getText().toString()));
 
         stepsText = (TextView)findViewById(R.id.stepsTextView);
 
@@ -56,15 +57,10 @@ public class Game_cats extends AppCompatActivity {
         int sti = Integer.parseInt(st);
         BTStatic.currentSteps = sti;
 
-        // początek - czy są trzy daty wstecz, jak nie to od razu umiera
-        // początek - czy są 10 k
-        // na bieżąco - jak będzie 10 k to wypisze "kotek żyje"
-
         checkSteps();
 
-
-
     }
+
 
     private void checkSteps(){       // sprawdza czy przez ostatnie 3 dni było 10 000 kroków
 
@@ -84,128 +80,59 @@ public class Game_cats extends AppCompatActivity {
         while(res.moveToNext()){                                // pobiera trzy ostatnie daty i zamienia je na inta
             String x = res.getString(1);
             String z = res.getString(2);
-            String r = "0";
-            if(res.getColumnCount()==4)
-                r = res.getString(3);
+            String r = res.getString(3) == null ? "0" : res.getString(3);
             String xx = x.substring(0,2);
             int y,yy,yyy;
-            try {
-                y = Integer.parseInt(x);
-                yy = Integer.parseInt(z);
-                yyy = Integer.parseInt(r);
-            }
-            catch(Throwable e){
-                y=yy=yyy=0;
-            }
+            y = Integer.parseInt(xx);
+            yy = Integer.parseInt(z);
+            yyy = Integer.parseInt(r);
             if(licznik == 0){ a = y; aa = yy; aaa = yyy;}
             if(licznik == 1){ b = y; bb = yy; bbb = yyy;}
             if(licznik == 2){ c = y; cc = yy; ccc = yyy;}
             licznik ++;
         }
 
+        BTStatic.rescued  = String.valueOf(aaa);
 
         System.out.println("a = " + a + " b = " + b + " c = " + c);            // test
-        System.out.println("aa = " + aa + " bb = " + bb + " cc = " + cc);      // test
+        System.out.println("aa = " + aa + " bb = " + bb + " cc = " + cc);        // test
         System.out.println("aaa = " + aaa + " bbb = " + bbb + " ccc = " + ccc);      // test
 
 
-
-        //if(czy dziś był uratowany)
-
-        //b == a-1 && c == b-1
         if(b == a-1 && c == b-1){                                        // czy są wpisy z trzech ostatnich dni
-            System.out.println("Trzy pod rząd");
 
-            if(aa < 100 && bb < 100 && cc < 100){           // umiera, ale można go odratować
+            boolean dying = true;
 
-                System.out.println("W ifie z trzema 100");
+            if(aa < 100 && bb < 100 && cc < 100 && aaa == 0)  { dying = true; }
+            else{ dying = false; }
 
-                String temp_steps = BTStatic.steps.getText().toString();
+            if(dying){           // umiera, ale można go odratować
+
+                final String temp_steps = BTStatic.steps.getText().toString();
                 BTStatic.steps.setText("0");
 
                 save.setVisibility(View.GONE);
-                image.setImageResource(R.drawable.kitty);
+                image.setImageResource(R.drawable.grave);
 
                 Toast.makeText(getApplicationContext(), "Your cat is dying!", Toast.LENGTH_LONG).show();
                 Toast.makeText(getApplicationContext(), "To save him, you have to do 3000 steps more", Toast.LENGTH_LONG).show();
 
-                boolean dying = true;
-
-                System.out.println("dupaaaaaaaaaaaaaaaaaaa" + Integer.parseInt(BTStatic.steps.getText().toString()));
-
-                if(dying){
-
-                    System.out.println("W dying");
-                    if(Integer.parseInt(BTStatic.steps.getText().toString()) > 20){
-                       // dying = false;
-                        //BTStatic.database.insertData(currentDateandTime, "20", "1");
-                        //BTStatic.rescued = 1;
+                System.out.println("W dying");
+                receiver = new BroadcastReceiver() {
+                    @Override
+                    public void onReceive(Context context, Intent intent) {
+                        image.setImageResource(R.drawable.kitty);
+                        save.setVisibility(View.VISIBLE);
+                        Toast.makeText(getApplicationContext(), "You saved your cat!", Toast.LENGTH_LONG).show();
+                        uratujKotka.interrupt();
+                        BTStatic.steps.setText(temp_steps);
+                        BTStatic.currentSteps = Integer.parseInt(temp_steps);
+                        BTStatic.rescued = "1";
                     }
-                }
-                else{
-
-                }
-
-
-
-                //int tempSteps = Integer.parseInt(BTStatic.steps.getText().toString());
-
-
-
-                if(Integer.parseInt(BTStatic.steps.getText().toString()) > 20){
-
-
-                }
-
-                //String tempS = BTStatic.steps.getText().toString();
-                //int temp = Integer.parseInt(tempS);
-                //System.out.println("String: " + tempS);
-                //System.out.println("Int: " + temp);
-
-               // int temp = 0;
-                //String tempText =  BTStatic.steps.getText().toString();
-
-
-                //int temp; // = Integer.parseInt(BTStatic.steps.getText().toString());
-
-                //System.out.println("int: " + temp);
-                //System.out.println("string: " + BTStatic.steps.getText().toString());
-                //System.out.println("integer: " + Integer.parseInt(BTStatic.steps.getText().toString()));
-
-               //int kroki = Integer.parseInt(BTStatic.steps.getText().toString());   // ilosc kroków - 0
-               // int tempik;
-
-               // while(temp < 20){
-
-                  //  temp ++;
-
-
-
-
-
-                        // tempik = Integer.parseInt(BTStatic.steps.getText().toString());      // ilość kroków bieżąca - 12
-                    //if(tempInt > tempik) {
-                       // temp = temp + (tempik - tempInt);
-                       // System.out.println("temp: " + temp);
-                        //tempInt = Integer.parseInt(BTStatic.steps.getText().toString());      // ilość kroków - 12
-                   // }
-
-
-                   //temp = Integer.parseInt(BTStatic.steps.getText().toString());
-                    //System.out.println("while: " + Integer.parseInt(BTStatic.steps.getText().toString()));
-                    //temp++;
-                  // System.out.println(temp);
-                        //
-
-               // }
-
-                image.setImageResource(R.drawable.kitty);
-                BTStatic.steps.setText(temp_steps);
-                save.setVisibility(View.VISIBLE);
-                Toast.makeText(getApplicationContext(), "You saved your cat!", Toast.LENGTH_LONG).show();
-
-
-
+                };
+                registerReceiver(receiver, new IntentFilter("com.example.CAT_RESCUED"));
+                uratujKotka = new Thread(new CatTask(this));
+                uratujKotka.start();
             }
 
         }
@@ -221,19 +148,6 @@ public class Game_cats extends AppCompatActivity {
 
         }
 
-
-
-
-
-
-
-
-    }
-
-    private boolean isDone(){
-        int tempSteps = Integer.parseInt(BTStatic.steps.getText().toString());
-        if(tempSteps > 20) return true;
-        else return false;
     }
 
 
@@ -273,6 +187,8 @@ public class Game_cats extends AppCompatActivity {
                     Toast.makeText(Game_cats.this, "Data not inserted", Toast.LENGTH_LONG).show();
                 }
             }
+
+            BTStatic.rescued = "0";
         }
     }
 
@@ -312,4 +228,15 @@ public class Game_cats extends AppCompatActivity {
         return "1";
     }
 
+
+    @Override
+    public void onBackPressed() {
+        if(uratujKotka != null){
+            uratujKotka.interrupt();
+        }
+        if(receiver != null){
+            unregisterReceiver(receiver);
+        }
+        finish();
+    }
 }

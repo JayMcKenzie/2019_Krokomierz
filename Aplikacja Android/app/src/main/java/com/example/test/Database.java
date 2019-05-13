@@ -17,7 +17,7 @@ public class Database extends SQLiteOpenHelper {
 
 
     private static final String DB_CREATE =
-            "CREATE TABLE " + TABLE_NAME + "( " + ID_COL + "INTEGER PRIMARY KEY AUTOINCREMENT" + ", " +
+            "CREATE TABLE " + TABLE_NAME + "( " + ID_COL + " INTEGER PRIMARY KEY AUTOINCREMENT" + ", " +
                     DATE_COL + ", " + STEPS_COL + "," + RESCUED_COL + ");";
 
 
@@ -46,7 +46,7 @@ public class Database extends SQLiteOpenHelper {
         ContentValues contentValue = new ContentValues();
         contentValue.put(DATE_COL, date);
         contentValue.put(STEPS_COL, steps);
-        contentValue.put(STEPS_COL, res);
+        contentValue.put(RESCUED_COL, res);
         long result = db.insert(TABLE_NAME, null, contentValue);
 
         if (result == -1) {                                                                      // "insert" zwraca -1 jeśli jest error
@@ -70,7 +70,7 @@ public class Database extends SQLiteOpenHelper {
         ContentValues contentValue = new ContentValues();
         contentValue.put(DATE_COL, date);
         contentValue.put(STEPS_COL, steps);
-        contentValue.put(STEPS_COL, res);
+        contentValue.put(RESCUED_COL, res);
         db.update(TABLE_NAME, contentValue, "Date = ?", new String[]{date} );
         return true;
     }
@@ -95,5 +95,4 @@ public class Database extends SQLiteOpenHelper {
         Cursor cursor = db.rawQuery(query, null);
         return cursor;
     }
-
 }

@@ -34,7 +34,9 @@ public class Show_data_cats extends AppCompatActivity {
 
         while(res.moveToNext()){
             buffer.append("Date: " + res.getString(1) + "\n");
-            buffer.append("Steps: " + res.getString(2) + "\n\n");
+            buffer.append("Steps: " + res.getString(2) + "\n");
+            buffer.append("Rescued: " + res.getString(3) + "\n\n");
+
         }
 
         data.setText(buffer.toString());
