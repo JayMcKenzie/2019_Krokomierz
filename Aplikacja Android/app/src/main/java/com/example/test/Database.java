@@ -13,11 +13,12 @@ public class Database extends SQLiteOpenHelper {
     private static final String ID_COL = "ID";
     private static final String DATE_COL = "Date";
     private static final String STEPS_COL = "Steps";
+    private static final String RESCUED_COL = "Rescued";
 
 
     private static final String DB_CREATE =
             "CREATE TABLE " + TABLE_NAME + "( " + ID_COL + "INTEGER PRIMARY KEY AUTOINCREMENT" + ", " +
-                    DATE_COL + ", " + STEPS_COL + ");";
+                    DATE_COL + ", " + STEPS_COL + "," + RESCUED_COL + ");";
 
 
     private static final String DB_DROP =
@@ -40,11 +41,12 @@ public class Database extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-    public boolean insertData(String date, String steps) {
+    public boolean insertData(String date, String steps, String res) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValue = new ContentValues();
         contentValue.put(DATE_COL, date);
         contentValue.put(STEPS_COL, steps);
+        contentValue.put(STEPS_COL, res);
         long result = db.insert(TABLE_NAME, null, contentValue);
 
         if (result == -1) {                                                                      // "insert" zwraca -1 jeśli jest error
@@ -63,11 +65,12 @@ public class Database extends SQLiteOpenHelper {
     }
 
 
-    public boolean updateData(String date, String steps) {
+    public boolean updateData(String date, String steps, String res) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValue = new ContentValues();
         contentValue.put(DATE_COL, date);
         contentValue.put(STEPS_COL, steps);
+        contentValue.put(STEPS_COL, res);
         db.update(TABLE_NAME, contentValue, "Date = ?", new String[]{date} );
         return true;
     }
