@@ -14,6 +14,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 
 
@@ -23,7 +24,9 @@ public class Game_cats extends AppCompatActivity {
     private TextView stepsText;
     private Button save;
     private Thread uratujKotka;
+    private Thread nakarmKotka;
     private BroadcastReceiver receiver;
+    private BroadcastReceiver receiver2;
 
     ImageView image;
 
@@ -58,8 +61,27 @@ public class Game_cats extends AppCompatActivity {
 
         // BTStatic.database.deleteData("17.05.2019");
 
-
         checkSteps();
+
+        startChecking();
+    }
+
+    private void isDatabaseEmpty(){
+
+        Cursor res = BTStatic.database.getAllData();
+
+        if(res.getCount() == 0) {
+
+            final Calendar cal = Calendar.getInstance();
+
+            cal.add(Calendar.DATE, -1);
+            cal.add(Calendar.DATE, -2);
+            cal.add(Calendar.DATE, -3);
+
+
+
+
+        }
 
     }
 
@@ -80,7 +102,7 @@ public class Game_cats extends AppCompatActivity {
 
 
 
-            while(res.moveToNext()){                                // pobiera cztery ostatnie daty i zamienia je na inta
+        while(res.moveToNext()){                                // pobiera cztery ostatnie daty i zamienia je na inta
             String x = res.getString(1);
             String z = res.getString(2);
             String r = res.getString(3) == null ? "0" : res.getString(3);
@@ -269,13 +291,32 @@ public class Game_cats extends AppCompatActivity {
     }
 
 
+    private void startChecking(){
+        receiver2 = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                Toast.makeText(getApplicationContext(), "You feed your cat today!", Toast.LENGTH_LONG).show();
+                nakarmKotka.interrupt();
+            }
+        };
+        registerReceiver(receiver2, new IntentFilter("com.example.CAT_FEED"));
+        nakarmKotka = new Thread(new CheckTask(this));
+        nakarmKotka.start();
+    }
+
     @Override
     public void onBackPressed() {
         if(uratujKotka != null){
             uratujKotka.interrupt();
         }
+        if(nakarmKotka != null){
+            nakarmKotka.interrupt();
+        }
         if(receiver != null){
             unregisterReceiver(receiver);
+        }
+        if(receiver2 != null){
+            unregisterReceiver(receiver2);
         }
         finish();
     }
