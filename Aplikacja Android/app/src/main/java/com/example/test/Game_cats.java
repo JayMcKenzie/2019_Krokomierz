@@ -15,7 +15,6 @@ import android.widget.Toast;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.concurrent.TimeUnit;
 
 
 public class Game_cats extends AppCompatActivity {
@@ -57,7 +56,7 @@ public class Game_cats extends AppCompatActivity {
         int sti = Integer.parseInt(st);
         BTStatic.currentSteps = sti;
 
-        //BTStatic.database.deleteData(currentDateandTime);
+       // BTStatic.database.deleteData("16.05.2019");
 
         checkSteps();
 
@@ -111,155 +110,30 @@ public class Game_cats extends AppCompatActivity {
         int today2 = Integer.parseInt(today);
 
 
-        if(today2 == a){
-            if(b == today2-1 && c == today2-2 && d == today2-3) {                                        // czy są wpisy z trzech ostatnich dni
+        if(today2 != a){
+            if(a == today2-1 && b == today2-2 && c == today2-3) {                                        // czy są wpisy z trzech ostatnich dni
 
                 boolean dying;
 
-               /* if(today2 == a) {
-                    if (aaa == 1) ddd = 1;   // nie ratujemy go znowu jeśli dziś już był
-                    else ddd = 0;            // nie był ratowany
-                }
-                else ddd = 0; */
+                if(aaa == 1 && bbb == 1 && ccc == 1){ dead(); }
 
+                if (aa < 100 && bb < 100 && cc < 100) { dying = true; }
+                else { dying = false; }
 
-                if (bb < 100 && cc < 100 && dd < 100 && aaa == 0) {
-                    dying = true;
-                } else {
-                    dying = false;
-                }
-
-
-                if (dying) {           // umiera, ale można go odratować
-                    dying();
-                }
-
+                if (dying) { dying(); }  // umiera, ale można go odratować
             }
-            else {                   // umiera od razu
-                dead();
-            }
+            else { dead(); }  // umiera od razu
         }
-        else{
-                if(a == today2-1 && b == today2-2 && c == today2-3) {                                        // czy są wpisy z trzech ostatnich dni
-
-                    boolean dying;
-
-                    /*if(today2 == a) {
-                        if (aaa == 1) ddd = 1;   // nie ratujemy go znowu jeśli dziś już był
-                        else ddd = 0;            // nie był ratowany
-                    }
-                    else ddd = 0; */
-
-
-                    if (aa < 100 && bb < 100 && cc < 100) {
-                        dying = true;
-                    } else {
-                        dying = false;
-                    }
-
-                    if (dying) {           // umiera, ale można go odratować
-                        dying();
-                    }
-                }
-                else {                   // umiera od razu
-                    dead();
-                }
-        }
-
-        //b == a-1 && c == b-1
-       /* if(b == a-1 && c == b-1){                                        // czy są wpisy z trzech ostatnich dni
-
-            boolean dying;
-
-            if(today2 == a) {
-                if (aaa == 1) ddd = 1;   // nie ratujemy go znowu jeśli dziś już był
-                else ddd = 0;            // nie był ratowany
-            }
-            else ddd = 0;
-
-
-            if(aa < 100 && bb < 100 && cc < 100 && ddd == 0)  { dying = true; }
-            else{ dying = false; }
-
-            if(dying){           // umiera, ale można go odratować
-
-                final String temp_steps = BTStatic.steps.getText().toString();
-                BTStatic.steps.setText("0");
-
-                save.setVisibility(View.GONE);
-                image.setImageResource(R.drawable.grave);
-
-                Toast.makeText(getApplicationContext(), "Your cat is dying!", Toast.LENGTH_LONG).show();
-                Toast.makeText(getApplicationContext(), "To save him, you have to do 3000 steps more", Toast.LENGTH_LONG).show();
-
-                BTStatic.howMany = 20;    // 3000
-
-                receiver = new BroadcastReceiver() {
-                    @Override
-                    public void onReceive(Context context, Intent intent) {
-                        image.setImageResource(R.drawable.kitty);
-                        save.setVisibility(View.VISIBLE);
-                        Toast.makeText(getApplicationContext(), "You saved your cat!", Toast.LENGTH_LONG).show();
-                        uratujKotka.interrupt();
-                        BTStatic.steps.setText(temp_steps);
-                        BTStatic.currentSteps = Integer.parseInt(temp_steps);
-                        BTStatic.rescued = "1";
-                    }
-                };
-                registerReceiver(receiver, new IntentFilter("com.example.CAT_RESCUED"));
-                uratujKotka = new Thread(new CatTask(this));
-                uratujKotka.start();
-            } */
-
-
-         /* else{                   // umiera od razu
-
-            final String temp_steps = BTStatic.steps.getText().toString();
-            BTStatic.steps.setText("0");
-            BTStatic.currentSteps = 0;
-
-            save.setVisibility(View.GONE);
-            image.setImageResource(R.drawable.kitty);         // shop
-
-            Toast.makeText(getApplicationContext(), "Your cat died...", Toast.LENGTH_LONG).show();
-            Toast.makeText(getApplicationContext(), "To save him, you have to do 3000 steps more", Toast.LENGTH_LONG).show();     //  shop
-
-            BTStatic.howMany = 30;        // 15000
-
-            receiver = new BroadcastReceiver() {
-                @Override
-                public void onReceive(Context context, Intent intent) {
-                    image.setImageResource(R.drawable.kitty);
-                    save.setVisibility(View.VISIBLE);
-                    Toast.makeText(getApplicationContext(), "You have a new cat!", Toast.LENGTH_LONG).show();
-                    uratujKotka.interrupt();
-                    BTStatic.steps.setText(temp_steps);
-                    BTStatic.currentSteps = Integer.parseInt(temp_steps);
-                    //BTStatic.rescued = "1"
-                }
-            };
-            registerReceiver(receiver, new IntentFilter("com.example.CAT_RESCUED"));
-            uratujKotka = new Thread(new CatTask(this));
-            uratujKotka.start();
-
-
-            /*
-            steps.setVisibility(View.GONE);
-            stepsText.setVisibility(View.GONE);
-            image.setImageResource(R.drawable.grave);
-            save.setVisibility(View.GONE);
-            Toast.makeText(getApplicationContext(), "Your cat died...", Toast.LENGTH_LONG).show();
-
-        } */
-
     }
+
 
     private void dying(){
         final String temp_steps = BTStatic.steps.getText().toString();
         BTStatic.steps.setText("0");
 
         save.setVisibility(View.GONE);
-        image.setImageResource(R.drawable.grave);
+        image.setImageResource(R.drawable.kitty);
+        image.setAlpha(160);
 
         Toast.makeText(getApplicationContext(), "Your cat is dying!", Toast.LENGTH_LONG).show();
         Toast.makeText(getApplicationContext(), "To save him, you have to do 3000 steps more", Toast.LENGTH_LONG).show();
@@ -270,6 +144,7 @@ public class Game_cats extends AppCompatActivity {
             @Override
             public void onReceive(Context context, Intent intent) {
                 image.setImageResource(R.drawable.kitty);
+                image.setAlpha(255);
                 save.setVisibility(View.VISIBLE);
                 Toast.makeText(getApplicationContext(), "You saved your cat!", Toast.LENGTH_LONG).show();
                 uratujKotka.interrupt();
@@ -290,10 +165,11 @@ public class Game_cats extends AppCompatActivity {
         BTStatic.currentSteps = 0;
 
         save.setVisibility(View.GONE);
-        image.setImageResource(R.drawable.kitty);         // shop
+        image.setImageResource(R.drawable.petstore);
 
         Toast.makeText(getApplicationContext(), "Your cat died...", Toast.LENGTH_LONG).show();
-        Toast.makeText(getApplicationContext(), "To save him, you have to do 3000 steps more", Toast.LENGTH_LONG).show();     //  shop
+        Toast.makeText(getApplicationContext(), "You have to buy a new cat! \n (The shop is 15000 steps away)", Toast.LENGTH_LONG).show();
+
 
         BTStatic.howMany = 30;        // 15000
 
