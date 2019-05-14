@@ -14,6 +14,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -60,7 +61,7 @@ public class Game_cats extends AppCompatActivity {
         int sti = Integer.parseInt(st);
         BTStatic.currentSteps = sti;
 
-        // BTStatic.database.deleteData("17.05.2019");
+        //BTStatic.database.deleteData("19.05.2019");
 
         isDatabaseEmpty();
 
@@ -69,15 +70,12 @@ public class Game_cats extends AppCompatActivity {
         startChecking();
     }
 
+
     private void isDatabaseEmpty(){
 
         Cursor res = BTStatic.database.getAllData();
 
         if(res.getCount() == 0) {
-
-            Date date1 = new Date();
-            Date date2 = new Date();
-            Date date3 = new Date();
 
             DateFormat dateFormat1 = new SimpleDateFormat("dd.MM.yyyy");
             String d1 = dateFormat1.format(yesterday(-1));
@@ -115,7 +113,7 @@ public class Game_cats extends AppCompatActivity {
         }
 
         int licznik = 0;
-        int a = 0, b = 0, c = 0;                         // a - dni
+        String a = "0", b = "0", c = "0";                         // a - dni
         int aa = 0, bb = 0, cc = 0;                        // aa - kroki danego dnia
         int aaa = 0, bbb = 0, ccc = 0;                       // aaa - 1 rescued, 0 died
 
@@ -125,16 +123,14 @@ public class Game_cats extends AppCompatActivity {
             String x = res.getString(1);
             String z = res.getString(2);
             String r = res.getString(3) == null ? "0" : res.getString(3);
-            String xx = x.substring(0,2);
 
-            int y,yy,yyy;
-            y = Integer.parseInt(xx);
+            int yy,yyy;
             yy = Integer.parseInt(z);
             yyy = Integer.parseInt(r);
 
-            if(licznik == 0){ a = y; aa = yy; aaa = yyy;}
-            if(licznik == 1){ b = y; bb = yy; bbb = yyy;}
-            if(licznik == 2){ c = y; cc = yy; ccc = yyy;}
+            if(licznik == 0){ a = x; aa = yy; aaa = yyy;}
+            if(licznik == 1){ b = x; bb = yy; bbb = yyy;}
+            if(licznik == 2){ c = x; cc = yy; ccc = yyy;}
 
             licznik ++;
         }
@@ -146,13 +142,20 @@ public class Game_cats extends AppCompatActivity {
         System.out.println("aa = " + aa + " bb = " + bb + " cc = " + cc);        // test
         System.out.println("aaa = " + aaa + " bbb = " + bbb + " ccc = " + ccc );      // test
 
+        Date today2 = new Date();
+        System.out.println("today = " + today2);
 
-        String today = currentDateandTime.substring(0,2);
-        int today2 = Integer.parseInt(today);
+        Date day1 = yesterday(-1);
+        Date day2 = yesterday(-2);
+        Date day3 = yesterday(-3);
 
+        System.out.println("day1 = " + day1 + " day2 = " + day2 + " day3 = " + day3 );    // test
+        System.out.println("today2" + today2.getDate());                                  // test
+        System.out.println("Pierwszy w bazie" + a);                                                      // test
 
-        if(today2 != a){
-            if(a == today2-1 && b == today2-2 && c == today2-3) {                                        // czy są wpisy z trzech ostatnich dni
+        if(!CompareTwoDates(today2,a)){
+
+            if(CompareThreeDates(a,b,c)) {                                        // czy są wpisy z trzech ostatnich dni
 
                 boolean dying = false;
 
@@ -164,6 +167,54 @@ public class Game_cats extends AppCompatActivity {
             }
             else { BTStatic.rescued = "0"; dead(); }  // umiera od razu
         }
+    }
+
+
+    private static boolean CompareThreeDates(String a, String b, String c){
+        SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy");
+        try{
+            Calendar calendar1 = Calendar.getInstance();
+            Calendar calendar2 = Calendar.getInstance();
+            Calendar calendar3 = Calendar.getInstance();
+            calendar1.setTime(format.parse(a));
+            calendar2.setTime(format.parse(b));
+            calendar3.setTime(format.parse(c));
+
+            calendar3.add(Calendar.DAY_OF_MONTH,2);
+            calendar2.add(Calendar.DAY_OF_MONTH,1);
+
+            if(calendar1.get(Calendar.DAY_OF_MONTH) == calendar2.get(Calendar.DAY_OF_MONTH)
+                    && calendar2.get(Calendar.DAY_OF_MONTH) == calendar3.get(Calendar.DAY_OF_MONTH)){
+
+                System.out.println("Trzy daty identyczne");
+                return true;
+            }
+        }
+        catch(ParseException e){
+            System.out.println(e.getMessage());
+        }
+
+        return false;
+    }
+
+
+    private static boolean CompareTwoDates(Date a, String b){
+        SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy");
+        try{
+            Calendar calendar1 = Calendar.getInstance();
+            Calendar calendar2 = Calendar.getInstance();
+            calendar1.setTime(a);
+            calendar2.setTime(format.parse(b));
+
+            if(calendar1.get(Calendar.DAY_OF_MONTH) == calendar2.get(Calendar.DAY_OF_MONTH)){
+                System.out.println("Dwie daty identyczne");
+                return true;
+            }
+        }
+        catch(ParseException e){
+            System.out.println(e.getMessage());
+        }
+        return false;
     }
 
 
@@ -313,14 +364,15 @@ public class Game_cats extends AppCompatActivity {
         receiver2 = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                Toast.makeText(getApplicationContext(), "You feed your cat today!", Toast.LENGTH_LONG).show();
                 nakarmKotka.interrupt();
+                Toast.makeText(getApplicationContext(), "You feed your cat today!", Toast.LENGTH_LONG).show();
             }
         };
         registerReceiver(receiver2, new IntentFilter("com.example.CAT_FEED"));
         nakarmKotka = new Thread(new CheckTask(this));
         nakarmKotka.start();
     }
+
 
     @Override
     public void onBackPressed() {

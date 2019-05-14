@@ -28,8 +28,6 @@ public class MainActivity extends AppCompatActivity {
 
     private BluetoothAdapter blueAdapt;
 
-    SharedPreferences SaveData;
-
     private static final String SaveGame = "Game saved";
     private static final String SaveSteps = "Steps saved";
     private static final String SaveDate = "Date saved";
@@ -46,10 +44,6 @@ public class MainActivity extends AppCompatActivity {
         data = (Button)findViewById(R.id.data_but);
         exit = (Button)findViewById(R.id.exit_but);
         connect = (Button)findViewById(R.id.connect_but);
-
-
-       // SaveData = getApplicationContext().getSharedPreferences(SaveGame, 0);
-        //System.out.println(SaveData);
 
 
         play.setOnClickListener(new View.OnClickListener() {
@@ -106,7 +100,6 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-
     private void ConnectBluetooth(){                                                    // https://developer.android.com/reference/android/bluetooth/BluetoothAdapter
 
         blueAdapt = BluetoothAdapter.getDefaultAdapter();                               // wyszukuje dostępne urządzenia Bluetooth
@@ -153,7 +146,6 @@ public class MainActivity extends AppCompatActivity {
         }
         return null;
     }
-
 
     private void setPlayBut() {
         Intent intent = new Intent(this, Game_mode.class);
