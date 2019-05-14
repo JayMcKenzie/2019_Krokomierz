@@ -84,7 +84,7 @@ public class Database extends SQLiteOpenHelper {
 
     public Cursor getLast3(){
         SQLiteDatabase db = this.getWritableDatabase();
-        String query = "Select * from " + TABLE_NAME + " ORDER BY Date DESC limit 3;";
+        String query = "Select * from " + TABLE_NAME + " ORDER BY Date DESC limit 4;";
         Cursor cursor = db.rawQuery(query, null);
         return cursor;
     }

@@ -12,7 +12,7 @@ public class CatTask implements Runnable {
 
     @Override
     public void run() {
-        while (Integer.parseInt(BTStatic.steps.getText().toString()) < 20) {
+        while (Integer.parseInt(BTStatic.steps.getText().toString()) < BTStatic.howMany) {
             try {
                 Thread.sleep(100);
             } catch (InterruptedException e) {
