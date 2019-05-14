@@ -13,6 +13,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -61,6 +62,8 @@ public class Game_cats extends AppCompatActivity {
 
         // BTStatic.database.deleteData("17.05.2019");
 
+        isDatabaseEmpty();
+
         checkSteps();
 
         startChecking();
@@ -72,17 +75,33 @@ public class Game_cats extends AppCompatActivity {
 
         if(res.getCount() == 0) {
 
-            final Calendar cal = Calendar.getInstance();
+            Date date1 = new Date();
+            Date date2 = new Date();
+            Date date3 = new Date();
 
-            cal.add(Calendar.DATE, -1);
-            cal.add(Calendar.DATE, -2);
-            cal.add(Calendar.DATE, -3);
+            DateFormat dateFormat1 = new SimpleDateFormat("dd.MM.yyyy");
+            String d1 = dateFormat1.format(yesterday(-1));
+            System.out.println(d1);
 
+            DateFormat dateFormat2 = new SimpleDateFormat("dd.MM.yyyy");
+            String d2 = dateFormat2.format(yesterday(-2));
+            System.out.println(d2);
 
+            DateFormat dateFormat3 = new SimpleDateFormat("dd.MM.yyyy");
+            String d3 = dateFormat3.format(yesterday(-3));
+            System.out.println(d3);
 
-
+            BTStatic.database.insertData(d1, "0", "0");
+            BTStatic.database.insertData(d2, "0", "0");
+            BTStatic.database.insertData(d3, "0", "0");
         }
+    }
 
+
+    private Date yesterday(int nr) {
+        final Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.DATE, nr);
+        return cal.getTime();
     }
 
 
@@ -96,9 +115,9 @@ public class Game_cats extends AppCompatActivity {
         }
 
         int licznik = 0;
-        int a = 0, b = 0, c = 0, d = 0;                         // a - dni
-        int aa = 0, bb = 0, cc = 0, dd = 0;                        // aa - kroki danego dnia
-        int aaa = 0, bbb = 0, ccc = 0, ddd = 0;                       // aaa - 1 rescued, 0 died
+        int a = 0, b = 0, c = 0;                         // a - dni
+        int aa = 0, bb = 0, cc = 0;                        // aa - kroki danego dnia
+        int aaa = 0, bbb = 0, ccc = 0;                       // aaa - 1 rescued, 0 died
 
 
 
@@ -116,7 +135,6 @@ public class Game_cats extends AppCompatActivity {
             if(licznik == 0){ a = y; aa = yy; aaa = yyy;}
             if(licznik == 1){ b = y; bb = yy; bbb = yyy;}
             if(licznik == 2){ c = y; cc = yy; ccc = yyy;}
-            if(licznik == 3){ d = y; dd = yy; ddd = yyy;}
 
             licznik ++;
         }
@@ -124,9 +142,9 @@ public class Game_cats extends AppCompatActivity {
 
         BTStatic.rescued  = String.valueOf(aaa);
 
-        System.out.println("a = " + a + " b = " + b + " c = " + c + " d " + d);            // test
-        System.out.println("aa = " + aa + " bb = " + bb + " cc = " + cc + " dd " + dd);        // test
-        System.out.println("aaa = " + aaa + " bbb = " + bbb + " ccc = " + ccc + " ddd " + ddd);      // test
+        System.out.println("a = " + a + " b = " + b + " c = " + c);            // test
+        System.out.println("aa = " + aa + " bb = " + bb + " cc = " + cc);        // test
+        System.out.println("aaa = " + aaa + " bbb = " + bbb + " ccc = " + ccc );      // test
 
 
         String today = currentDateandTime.substring(0,2);
