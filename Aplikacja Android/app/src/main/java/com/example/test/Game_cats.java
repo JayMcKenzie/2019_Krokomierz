@@ -56,7 +56,8 @@ public class Game_cats extends AppCompatActivity {
         int sti = Integer.parseInt(st);
         BTStatic.currentSteps = sti;
 
-       // BTStatic.database.deleteData("16.05.2019");
+        // BTStatic.database.deleteData("17.05.2019");
+
 
         checkSteps();
 
@@ -113,16 +114,15 @@ public class Game_cats extends AppCompatActivity {
         if(today2 != a){
             if(a == today2-1 && b == today2-2 && c == today2-3) {                                        // czy są wpisy z trzech ostatnich dni
 
-                boolean dying;
+                boolean dying = false;
 
-                if(aaa == 1 && bbb == 1 && ccc == 1){ dead(); }
+                if(aaa == 1 && bbb == 1 && ccc == 1){ BTStatic.rescued = "0"; dead(); }
+                else if (aa < 100 && bb < 100 && cc < 100) { dying = true; }
+                else { BTStatic.rescued = "0"; dying = false; }
 
-                if (aa < 100 && bb < 100 && cc < 100) { dying = true; }
-                else { dying = false; }
-
-                if (dying) { dying(); }  // umiera, ale można go odratować
+                if (dying) { dying(); dying = false; }  // umiera, ale można go odratować
             }
-            else { dead(); }  // umiera od razu
+            else { BTStatic.rescued = "0"; dead(); }  // umiera od razu
         }
     }
 
@@ -265,7 +265,7 @@ public class Game_cats extends AppCompatActivity {
             }
         }
 
-        return "1";
+        return "0";
     }
 
 
