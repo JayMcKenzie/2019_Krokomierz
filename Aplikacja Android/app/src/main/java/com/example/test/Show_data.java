@@ -38,8 +38,8 @@ public class Show_data extends AppCompatActivity {
     }
 
     private void setCarsBut() {
-
-
+        Intent intent = new Intent(this, Show_data_cars.class);
+        startActivity(intent);
     }
 
 

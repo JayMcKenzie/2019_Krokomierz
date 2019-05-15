@@ -18,6 +18,8 @@
         <activity android:name=".Game_mode"></activity>
         <activity android:name=".Game_cats" />
         <activity android:name=".Show_data" />
+        <activity android:name=".Show_data_cars" />
+        <activity android:name=".Game_cars" />
         <activity android:name=".Show_data_cats" />
         <activity android:name=".MainActivity">
             <intent-filter>

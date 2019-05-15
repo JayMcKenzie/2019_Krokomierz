@@ -73,6 +73,7 @@ public class MainActivity extends AppCompatActivity {
         alertExit();
 
         BTStatic.database = new Database(this);
+        BTStatic.databaseCar = new Database_cars(this);
     }
 
 

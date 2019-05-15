@@ -37,8 +37,8 @@ public class Game_mode extends AppCompatActivity {
     }
 
     private void setCarsBut() {
-
-
+        Intent intent = new Intent(this, Game_cars.class);
+        startActivity(intent);
     }
 
 }
