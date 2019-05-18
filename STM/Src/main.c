@@ -91,6 +91,9 @@ double maxvalue;
 uint32_t maxvalueindex;
 int krokiCache = 0;
 
+void sendStep();
+void CzyKrok();
+
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
    if(huart->Instance == USART3){
 	   char odb = receiveUART[0];
