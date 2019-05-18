@@ -2,17 +2,17 @@ package com.example.test;
 import android.content.Context;
 import android.content.Intent;
 
-public class CarTask implements Runnable  {
+public class CarTaskReady implements Runnable  {
 
     private Context kontekst;
 
-    CarTask(Context context) {
+    CarTaskReady(Context context) {
         kontekst = context;
     }
 
     @Override
     public void run() {
-        while (Integer.parseInt(BTStatic.stepsCar.getText().toString()) < BTStatic.whenIssue) {
+        while (Integer.parseInt(BTStatic.stepsCar.getText().toString()) < 20) {       // 2000
             try {
                 Thread.sleep(100);
             } catch (InterruptedException e) {
@@ -20,7 +20,6 @@ public class CarTask implements Runnable  {
             }
         }
 
-        //BTStatic.ready = true;
-        kontekst.sendBroadcast(new Intent("com.example.READY"));
+        kontekst.sendBroadcast(new Intent("com.example.FIXED"));
     }
 }

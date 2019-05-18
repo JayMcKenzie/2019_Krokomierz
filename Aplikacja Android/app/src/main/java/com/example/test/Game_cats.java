@@ -186,6 +186,8 @@ public class Game_cats extends AppCompatActivity {
             if(calendar1.get(Calendar.DAY_OF_MONTH) == calendar2.get(Calendar.DAY_OF_MONTH)
                     && calendar2.get(Calendar.DAY_OF_MONTH) == calendar3.get(Calendar.DAY_OF_MONTH)){
 
+                System.out.println(calendar1);
+                System.out.println(calendar2);
                 System.out.println("Trzy daty identyczne");
                 return true;
             }

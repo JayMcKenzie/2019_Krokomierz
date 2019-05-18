@@ -28,8 +28,11 @@ public class Game_cars extends AppCompatActivity {
     private TextView carText;
     private Button save;
     private Thread fuelYourCar;
-    private BroadcastReceiver receiver;
+    private Thread issues;
+    private Thread repair;
+    private BroadcastReceiver receiver4;
     private BroadcastReceiver receiver2;
+    private BroadcastReceiver receiver3;
 
     ImageView image;
 
@@ -73,13 +76,91 @@ public class Game_cars extends AppCompatActivity {
         isDatabaseEmpty();
 
         startChecking();
+
+        boolean ifIssue = issue();
+
+        if(ifIssue){
+            BTStatic.whenIssue = when();
+
+            checkWhen();
+        }
+    }
+
+
+    private void checkWhen(){
+        receiver4 = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                issues.interrupt();
+                Toast.makeText(getApplicationContext(), "Your car has an issue. You need to do 2000 steps to fix it.", Toast.LENGTH_LONG).show();
+                //checkIssue();
+            }
+        };
+
+        registerReceiver(receiver4, new IntentFilter("com.example.READY"));
+        issues = new Thread(new CarTask(this));
+        issues.start();
+    }
+
+
+    private void checkIssue(){
+        final String temp_steps = BTStatic.steps.getText().toString();
+        BTStatic.steps.setText("0");
+
+        save.setVisibility(View.GONE);
+        image.setAlpha(160);
+
+        receiver3 = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                image.setAlpha(255);
+                save.setVisibility(View.VISIBLE);
+                repair.interrupt();
+                Toast.makeText(getApplicationContext(), "You fixed your car!", Toast.LENGTH_LONG).show();
+                BTStatic.steps.setText(temp_steps);
+                BTStatic.currentSteps = Integer.parseInt(temp_steps);
+            }
+        };
+
+        registerReceiver(receiver3, new IntentFilter("com.example.FIXED"));
+        repair = new Thread(new CarTaskReady(this));
+        repair.start();
+
+        BTStatic.ready = false;
+    }
+
+
+    private boolean issue(){
+
+        Random rand = new Random();
+        int iss = rand.nextInt(100);
+
+        System.out.println("Czy będzie awaria: " + iss);
+
+        if(iss <= BTStatic.scale){
+            return true;
+        }
+        else return false;
+    }
+
+
+    private int when(){
+        Random rand = new Random();
+        int required = Integer.parseInt(BTStatic.required);
+        int iss = rand.nextInt(required);
+
+        if (iss == 0) iss = 1;
+
+        System.out.println("Krok, po którym będzie awaria " + iss);
+
+        return iss;
     }
 
 
     private String drawCar(){
 
         Random rand = new Random();
-        int car = rand.nextInt(9);
+        int car = rand.nextInt(10);
         System.out.println("Wylosowano: " + car);
 
         switch (car) {
@@ -94,8 +175,8 @@ public class Game_cars extends AppCompatActivity {
             case 1: {
                 System.out.println("Ferrari");
                 BTStatic.car = "Ferrari";
-                BTStatic.scale = 8;
-                BTStatic.required = "9000";
+                BTStatic.scale = 98;            //
+                BTStatic.required = "9";        // 9000
                 break;
             }
 
@@ -159,7 +240,7 @@ public class Game_cars extends AppCompatActivity {
                 System.out.println("Williams");
                 BTStatic.car = "Williams";
                 BTStatic.scale = 30;
-                BTStatic.required = "3000";
+                BTStatic.required = "3000";     
                 break;
             }
 
@@ -168,6 +249,8 @@ public class Game_cars extends AppCompatActivity {
                 break;
             }
         }
+
+        Toast.makeText(getApplicationContext(), "You have to do " + BTStatic.required + " steps to refuel your car", Toast.LENGTH_LONG).show();
 
         return BTStatic.car;
     }
@@ -348,14 +431,15 @@ public class Game_cars extends AppCompatActivity {
         receiver2 = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                fuelYourCar.interrupt();
                 Toast.makeText(getApplicationContext(), "You fueled your car today!", Toast.LENGTH_LONG).show();
+                fuelYourCar.interrupt();
             }
         };
         registerReceiver(receiver2, new IntentFilter("com.example.FUELED"));
         fuelYourCar = new Thread(new CheckTaskCars(this));
         fuelYourCar.start();
     }
+
 
     @Override
     public void onBackPressed() {
@@ -365,6 +449,19 @@ public class Game_cars extends AppCompatActivity {
         if(receiver2 != null){
             unregisterReceiver(receiver2);
         }
+        if(issues != null){
+            issues.interrupt();
+        }
+        if(receiver4 != null){
+            unregisterReceiver(receiver4);
+        }
+        if(repair != null){
+            repair.interrupt();
+        }
+        if(receiver3 != null){
+            unregisterReceiver(receiver3);
+        }
         finish();
     }
 }
+

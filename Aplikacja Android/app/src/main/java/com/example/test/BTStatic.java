@@ -16,6 +16,8 @@ public class BTStatic {
     public static String required = "0";
     public static String fueled = "0";
     public static int scale = 0;
+    public static int whenIssue = 0;
+    public static boolean ready = false;
 
 
 }
