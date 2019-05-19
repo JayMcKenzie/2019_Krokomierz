@@ -31,7 +31,7 @@ public class BluetoothSender extends Thread {
         while (true) try {
             String zapytanie = "Z";
             outputstream.write(zapytanie.getBytes());
-            Thread.sleep(1000);
+            Thread.sleep(400);
         } catch (Throwable e) {
             Log.d(TAG, "Error!", e);
             break;

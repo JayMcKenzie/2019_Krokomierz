@@ -14,7 +14,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.text.DateFormat;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -50,7 +49,9 @@ public class Game_cars extends AppCompatActivity {
 
         stepsText = (TextView)findViewById(R.id.stepsTextView);
 
-        BTStatic.car = drawCar();
+        if (!getTop()){
+            BTStatic.car = drawCar();
+        }
 
         image = (ImageView)findViewById(R.id.Pic);
 
@@ -68,10 +69,9 @@ public class Game_cars extends AppCompatActivity {
 
         String st = showSteps();
         steps.setText(st);
-        int sti = Integer.parseInt(st);
-        BTStatic.currentSteps = sti;
+        BTStatic.currentSteps = Integer.parseInt(st);;
 
-        //BTStatic.database.deleteData("19.05.2019");
+        //BTStatic.databaseCar.deleteData("31.05.2019");
 
         isDatabaseEmpty();
 
@@ -79,11 +79,29 @@ public class Game_cars extends AppCompatActivity {
 
         boolean ifIssue = issue();
 
-        if(ifIssue){
+        if(ifIssue && BTStatic.ready.equals("0")) {
             BTStatic.whenIssue = when();
 
             checkWhen();
         }
+    }
+
+
+    private boolean getTop(){
+        Cursor res = BTStatic.databaseCar.getTop();
+
+        if(res.getCount() == 0) {
+            Toast.makeText(getApplicationContext(), "Database is empty", Toast.LENGTH_LONG).show();
+            return false;
+        }
+
+        while(res.moveToNext()){
+
+            if(currentDateandTime.equals(res.getString(1))){           // sprawdza, czy taka data jest już w bazie
+                return true;
+            }
+        }
+        return false;
     }
 
 
@@ -92,8 +110,8 @@ public class Game_cars extends AppCompatActivity {
             @Override
             public void onReceive(Context context, Intent intent) {
                 issues.interrupt();
-                Toast.makeText(getApplicationContext(), "Your car has an issue. You need to do 2000 steps to fix it.", Toast.LENGTH_LONG).show();
-                //checkIssue();
+                Toast.makeText(getApplicationContext(), "Your car has an issue. You need to do 2000 steps to fix it.", Toast.LENGTH_SHORT).show();
+                checkIssue();
             }
         };
 
@@ -104,8 +122,12 @@ public class Game_cars extends AppCompatActivity {
 
 
     private void checkIssue(){
-        final String temp_steps = BTStatic.steps.getText().toString();
-        BTStatic.steps.setText("0");
+
+        BTStatic.repairing = true;
+        final String temp_steps = BTStatic.stepsCar.getText().toString();
+        System.out.println("tempSteps: " + temp_steps);
+        BTStatic.stepsCar.setText("0");
+        BTStatic.currentSteps = 0;
 
         save.setVisibility(View.GONE);
         image.setAlpha(160);
@@ -116,9 +138,11 @@ public class Game_cars extends AppCompatActivity {
                 image.setAlpha(255);
                 save.setVisibility(View.VISIBLE);
                 repair.interrupt();
-                Toast.makeText(getApplicationContext(), "You fixed your car!", Toast.LENGTH_LONG).show();
-                BTStatic.steps.setText(temp_steps);
+                Toast.makeText(getApplicationContext(), "You fixed your car!", Toast.LENGTH_SHORT).show();
+                BTStatic.stepsCar.setText(temp_steps);
                 BTStatic.currentSteps = Integer.parseInt(temp_steps);
+                BTStatic.repairing = false;
+                BTStatic.ready = "1";
             }
         };
 
@@ -126,7 +150,7 @@ public class Game_cars extends AppCompatActivity {
         repair = new Thread(new CarTaskReady(this));
         repair.start();
 
-        BTStatic.ready = false;
+        BTStatic.ready = "0";
     }
 
 
@@ -175,8 +199,8 @@ public class Game_cars extends AppCompatActivity {
             case 1: {
                 System.out.println("Ferrari");
                 BTStatic.car = "Ferrari";
-                BTStatic.scale = 98;            //
-                BTStatic.required = "9";        // 9000
+                BTStatic.scale = 8;
+                BTStatic.required = "9000";
                 break;
             }
 
@@ -240,7 +264,7 @@ public class Game_cars extends AppCompatActivity {
                 System.out.println("Williams");
                 BTStatic.car = "Williams";
                 BTStatic.scale = 30;
-                BTStatic.required = "3000";     
+                BTStatic.required = "3000";
                 break;
             }
 
@@ -250,7 +274,7 @@ public class Game_cars extends AppCompatActivity {
             }
         }
 
-        Toast.makeText(getApplicationContext(), "You have to do " + BTStatic.required + " steps to refuel your car", Toast.LENGTH_LONG).show();
+        Toast.makeText(getApplicationContext(), "You have to do " + BTStatic.required + " steps to refuel your car", Toast.LENGTH_SHORT).show();
 
         return BTStatic.car;
     }
@@ -335,9 +359,9 @@ public class Game_cars extends AppCompatActivity {
             String d3 = dateFormat3.format(yesterday(-3));
             System.out.println(d3);
 
-            BTStatic.databaseCar.insertData(d1, "0", "empty", "0", "0");
-            BTStatic.databaseCar.insertData(d2, "0", "empty", "0", "0");
-            BTStatic.databaseCar.insertData(d3, "0", "empty", "0", "0");
+            BTStatic.databaseCar.insertData(d1, "0", "empty", "0", "0", "0");
+            BTStatic.databaseCar.insertData(d2, "0", "empty", "0", "0", "0");
+            BTStatic.databaseCar.insertData(d3, "0", "empty", "0", "0", "0");
         }
     }
 
@@ -366,17 +390,17 @@ public class Game_cars extends AppCompatActivity {
             //BTStatic.database.deleteData(currentDateandTime);
 
             if(checkDate()){
-                boolean isUpdated = BTStatic.databaseCar.updateData(savedsate, savedsteps, BTStatic.car, BTStatic.required, BTStatic.fueled);
+                boolean isUpdated = BTStatic.databaseCar.updateData(savedsate, savedsteps, BTStatic.car, BTStatic.required, BTStatic.fueled, BTStatic.ready);
 
                 if (isUpdated == true){
-                    Toast.makeText(Game_cars.this, "Data updated", Toast.LENGTH_LONG).show();
+                    Toast.makeText(Game_cars.this, "Data updated", Toast.LENGTH_SHORT).show();
                 }
                 else{
-                    Toast.makeText(Game_cars.this, "Data not updated", Toast.LENGTH_LONG).show();
+                    Toast.makeText(Game_cars.this, "Data not updated", Toast.LENGTH_SHORT).show();
                 }
             }
             else{
-                boolean isInserted = BTStatic.databaseCar.insertData(savedsate, savedsteps, BTStatic.car, BTStatic.required, BTStatic.fueled);
+                boolean isInserted = BTStatic.databaseCar.insertData(savedsate, savedsteps, BTStatic.car, BTStatic.required, BTStatic.fueled, BTStatic.ready);
 
                 if (isInserted == true){
                     Toast.makeText(Game_cars.this, "Data inserted", Toast.LENGTH_LONG).show();
@@ -400,6 +424,7 @@ public class Game_cars extends AppCompatActivity {
         }
 
         while(res.moveToNext()){
+
             if(currentDateandTime.equals(res.getString(1))){           // sprawdza, czy taka data jest już w bazie
                 return true;
             }
@@ -419,6 +444,8 @@ public class Game_cars extends AppCompatActivity {
 
         while(res.moveToNext()){
             if(currentDateandTime.equals(res.getString(1))){
+                BTStatic.ready = res.getString(5) == null ? "0": res.getString(5);
+                if(!res.getString(3).equals("empty")) BTStatic.car = res.getString(3);
                 return res.getString(2) == null ? "0": res.getString(2);
             }
         }
@@ -431,7 +458,7 @@ public class Game_cars extends AppCompatActivity {
         receiver2 = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                Toast.makeText(getApplicationContext(), "You fueled your car today!", Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), "You fueled your car today!", Toast.LENGTH_SHORT).show();
                 fuelYourCar.interrupt();
             }
         };

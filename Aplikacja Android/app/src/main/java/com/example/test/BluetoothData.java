@@ -64,6 +64,13 @@ public class BluetoothData extends Thread {
                             }
                         });
                     }
+                    if (BTStatic.stepsCar != null) {
+                        BTStatic.stepsCar.post(new Runnable() {
+                            public void run() {
+                                BTStatic.stepsCar.setText(dane);
+                            }
+                        });
+                    }
                 }
             }
             catch (Throwable e)

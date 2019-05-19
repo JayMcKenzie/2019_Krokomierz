@@ -60,7 +60,7 @@ public class Database extends SQLiteOpenHelper {
 
     public Cursor getAllData(){
         SQLiteDatabase db = this.getWritableDatabase();
-        Cursor cursor = db.rawQuery("select * from " + TABLE_NAME + " ORDER BY Date DESC;", null);
+        Cursor cursor = db.rawQuery("select * from " + TABLE_NAME + " ORDER BY  date(substr(Date,7)||'-'||substr(Date,4,2)||'-'||substr(Date,1,2)) DESC;", null);
         return cursor;
     }
 
@@ -84,14 +84,14 @@ public class Database extends SQLiteOpenHelper {
 
     public Cursor getLast3(){
         SQLiteDatabase db = this.getWritableDatabase();
-        String query = "Select * from " + TABLE_NAME + " ORDER BY Date DESC limit 4;";
+        String query = "Select * from " + TABLE_NAME + " ORDER BY  date(substr(Date,7)||'-'||substr(Date,4,2)||'-'||substr(Date,1,2)) DESC limit 4;";
         Cursor cursor = db.rawQuery(query, null);
         return cursor;
     }
 
     public Cursor getTop(){
         SQLiteDatabase db = this.getWritableDatabase();
-        String query = "Select * from " + TABLE_NAME + " limit 1;";
+        String query = "Select * from " + TABLE_NAME + " ORDER BY  date(substr(Date,7)||'-'||substr(Date,4,2)||'-'||substr(Date,1,2)) DESC limit 1;";
         Cursor cursor = db.rawQuery(query, null);
         return cursor;
     }

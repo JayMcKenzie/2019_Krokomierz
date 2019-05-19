@@ -14,7 +14,7 @@ public class CheckTaskCars  implements Runnable{
 
     @Override
     public void run() {
-        while (Integer.parseInt(BTStatic.stepsCar.getText().toString()) < n*Integer.parseInt(BTStatic.required)) {
+        while (Integer.parseInt(BTStatic.stepsCar.getText().toString()) < n*Integer.parseInt(BTStatic.required ) || BTStatic.repairing) {
             try {
                 Thread.sleep(100);
             } catch (InterruptedException e) {
