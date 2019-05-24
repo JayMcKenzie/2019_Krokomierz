@@ -1,41 +1,3 @@
-
-/**
-  ******************************************************************************
-  * @file           : main.c
-  * @brief          : Main program body
-  ******************************************************************************
-  ** This notice applies to any and all portions of this file
-  * that are not between comment pairs USER CODE BEGIN and
-  * USER CODE END. Other portions of this file, whether 
-  * inserted by the user or by software development tools
-  * are owned by their respective copyright owners.
-  *
-  * COPYRIGHT(c) 2019 STMicroelectronics
-  *
-  * Redistribution and use in source and binary forms, with or without modification,
-  * are permitted provided that the following conditions are met:
-  *   1. Redistributions of source code must retain the above copyright notice,
-  *      this list of conditions and the following disclaimer.
-  *   2. Redistributions in binary form must reproduce the above copyright notice,
-  *      this list of conditions and the following disclaimer in the documentation
-  *      and/or other materials provided with the distribution.
-  *   3. Neither the name of STMicroelectronics nor the names of its contributors
-  *      may be used to endorse or promote products derived from this software
-  *      without specific prior written permission.
-  *
-  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-  * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
-  * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-  * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-  * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-  * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-  *
-  ******************************************************************************
-  */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "stm32f4xx_hal.h"
@@ -83,12 +45,12 @@ int kroki = 0;
 int8_t stop = 0;
 
 double probki[64] = {0.0};
-float comp[128] = {0.0};
+float zesp[128] = {0.0};
 float mag[64] = {0.0};
 
 uint8_t wyniki = 0;
 double maxvalue;
-uint32_t maxvalueindex;
+uint32_t vindex;
 int krokiCache = 0;
 
 void sendStep();
@@ -131,30 +93,32 @@ void CzyKrok(){
 	uint8_t u = 0;
 
 	for(int i = 0; i < 128; i = i + 2){
-		comp[i] = (float) probki[u++];
+		zesp[i] = (float) probki[u++];
 	}
 
 
 	// Transformata
 	kiss_fft_cfg cfg = kiss_fft_alloc(64, 0, 0, 0);
 
-
-	kiss_fft(cfg, comp, comp);
+	kiss_fft(cfg, zesp, zesp);
 
 	free(cfg);
-	comp[0] = 0;
+
+	zesp[0] = 0;
 
 
 	// Modu³ liczby zespolonej
-	arm_cmplx_mag_squared_f32(comp, mag, 64);
+	arm_cmplx_mag_squared_f32(zesp, mag, 64);
+
 	mag[0] = 0;
 
 
 	// Maksymalna wartosc
-	arm_max_f32(mag, 64, &maxvalue, &maxvalueindex);
+	arm_max_f32(mag, 64, &maxvalue, &vindex);
 
+	mag[2] = mag[2]/100000;
 
-	if(mag[2] > 50000000){
+	if(mag[2] > 196){
 		if(stop == 0){
 			kroki++;
 			//sendStep(++kroki);
@@ -169,7 +133,7 @@ void CzyKrok(){
 	}
 
 	for(int i=0;i<2*64;i++){
-		comp[i] = 0;
+		zesp[i] = 0;
 	}
 
 	wyniki = 0;
