@@ -12,7 +12,7 @@ public class CarTaskReady implements Runnable  {
 
     @Override
     public void run() {
-        while (Integer.parseInt(BTStatic.stepsCar.getText().toString()) < 20) {       // 2000
+        while (Integer.parseInt(BTStatic.stepsCar.getText().toString()) < 2000) {
             try {
                 Thread.sleep(100);
             } catch (InterruptedException e) {

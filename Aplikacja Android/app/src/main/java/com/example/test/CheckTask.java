@@ -14,7 +14,7 @@ public class CheckTask  implements Runnable{
 
     @Override
     public void run() {
-        while (Integer.parseInt(BTStatic.steps.getText().toString()) < 100) {
+        while (Integer.parseInt(BTStatic.steps.getText().toString()) < 10000) {
             try {
                 Thread.sleep(100);
             } catch (InterruptedException e) {
@@ -22,7 +22,7 @@ public class CheckTask  implements Runnable{
             }
         }
 
-        if(Integer.parseInt(BTStatic.steps.getText().toString()) >= 100){
+        if(Integer.parseInt(BTStatic.steps.getText().toString()) >= 10000){
             BTStatic.feed = true;
         }
 

@@ -160,7 +160,7 @@ public class Game_cats extends AppCompatActivity {
                 boolean dying = false;
 
                 if(aaa == 1 && bbb == 1 && ccc == 1){ BTStatic.rescued = "0"; dead(); }
-                else if (aa < 100 && bb < 100 && cc < 100) { dying = true; }
+                else if (aa < 10000 && bb < 10000 && cc < 10000) { dying = true; }
                 else { BTStatic.rescued = "0"; dying = false; }
 
                 if (dying) { dying(); dying = false; }  // umiera, ale można go odratować
@@ -231,7 +231,7 @@ public class Game_cats extends AppCompatActivity {
         Toast.makeText(getApplicationContext(), "Your cat is dying!", Toast.LENGTH_LONG).show();
         Toast.makeText(getApplicationContext(), "To save him, you have to do 3000 steps more", Toast.LENGTH_LONG).show();
 
-        BTStatic.howMany = 20;    // 3000
+        BTStatic.howMany = 3000;
 
         receiver = new BroadcastReceiver() {
             @Override
@@ -264,7 +264,7 @@ public class Game_cats extends AppCompatActivity {
         Toast.makeText(getApplicationContext(), "You have to buy a new cat! \n (The shop is 15000 steps away)", Toast.LENGTH_LONG).show();
 
 
-        BTStatic.howMany = 30;        // 15000
+        BTStatic.howMany = 15000;
 
         receiver = new BroadcastReceiver() {
             @Override

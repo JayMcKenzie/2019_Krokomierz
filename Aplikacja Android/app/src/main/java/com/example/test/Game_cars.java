@@ -69,7 +69,7 @@ public class Game_cars extends AppCompatActivity {
 
         String st = showSteps();
         steps.setText(st);
-        BTStatic.currentSteps = Integer.parseInt(st);;
+        BTStatic.currentSteps = Integer.parseInt(st);
 
         //BTStatic.databaseCar.deleteData("31.05.2019");
 
@@ -83,6 +83,10 @@ public class Game_cars extends AppCompatActivity {
             BTStatic.whenIssue = when();
 
             checkWhen();
+        }
+
+        if(!getTop()){
+            BTStatic.fueled = "0";
         }
     }
 
@@ -409,8 +413,6 @@ public class Game_cars extends AppCompatActivity {
                     Toast.makeText(Game_cars.this, "Data not inserted", Toast.LENGTH_LONG).show();
                 }
             }
-
-            BTStatic.fueled = "0";
         }
     }
 
